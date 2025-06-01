@@ -3,11 +3,12 @@ import streamlit as st
 from datetime import datetime, date, time
 
 # --- Dynamic Table for Editing Behaviors ---
-@st.cache_data
 def load_csv():
     return pd.read_csv("Behavior Tracking - Sheet1.csv")
 
 df = load_csv()
+if "Prompt Time" not in df.columns:
+    df["Prompt Time"] = ""
 
 today_str = date.today().isoformat()
 if "daily_responses" not in st.session_state or st.session_state.get("last_checked") != today_str:
