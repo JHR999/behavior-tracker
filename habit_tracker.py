@@ -57,9 +57,9 @@ st.markdown(
     """
 <style>
 .stButton > button {
-    height: 400px;
-    width: 400px;
-    font-size: 100px;
+    height: 140px;
+    width: 140px;
+    font-size: 400px;
     border-radius: 12px;
     text-align: center;
     padding: 0;
