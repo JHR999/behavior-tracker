@@ -10,41 +10,22 @@ def load_csv():
 def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
-    html_code = f"""
-    <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px;">
-        <form action="?action=down&index={index}" method="get">
-            <button style="
-                font-size: 64px;
-                width: 100px;
-                height: 100px;
-                border-radius: 12px;
-                background-color: #1e1e1e;
-                border: 2px solid red;
-                box-shadow: 0 6px 12px rgba(255, 0, 0, 0.4);
-                cursor: pointer;
-                transition: transform 0.2s ease;
-            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                {down_emoji}
-            </button>
-        </form>
-        <form action="?action=up&index={index}" method="get">
-            <button style="
-                font-size: 64px;
-                width: 100px;
-                height: 100px;
-                border-radius: 12px;
-                background-color: #1e1e1e;
-                border: 2px solid lime;
-                box-shadow: 0 6px 12px rgba(0, 255, 0, 0.4);
-                cursor: pointer;
-                transition: transform 0.2s ease;
-            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                {up_emoji}
-            </button>
-        </form>
-    </div>
-    """
-    html(html_code, height=180)
+    
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
+            st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
+    with col2:
+        if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
+            st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
 
 df = load_csv()
 # Clean up column names (strip whitespace)
