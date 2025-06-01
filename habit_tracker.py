@@ -1,47 +1,28 @@
+import pandas as pd
 import streamlit as st
 
-# --- Safe Setup ---
-def initialize_session():
-    if "habits" not in st.session_state:
-        st.session_state["habits"] = {
-            "Wake up at 5:30 AM": 74,
-            "Morning Walk": 82,
-            "Cold Shower": 71,
-            "No Sugar": 82
-        }
-    if "keys" not in st.session_state:
-        st.session_state["keys"] = list(st.session_state["habits"].keys())
-    if "index" not in st.session_state:
-        st.session_state["index"] = 0
+# --- Dynamic Table for Editing Behaviors ---
+@st.cache_data
+def load_csv():
+    return pd.read_csv("Behavior Tracking - Sheet1.csv")
 
-initialize_session()
+df = load_csv()
 
-# --- Logic
-if "keys" in st.session_state and "index" in st.session_state:
-    if st.session_state["keys"]:
-        index = st.session_state["index"] % len(st.session_state["keys"])
-        current_habit = st.session_state["keys"][index]
+edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
 
-        st.markdown(f"### Did you do **{current_habit}** today?")
-
-        col1, col2 = st.columns(2)
-        if col1.button("✅ Yes"):
-            st.session_state["habits"][current_habit] = min(100, st.session_state["habits"][current_habit] + 1)
-            st.session_state["index"] = (index + 1) % len(st.session_state["keys"])
-        elif col2.button("❌ No"):
-            st.session_state["habits"][current_habit] = max(0, st.session_state["habits"][current_habit] - 1)
-            st.session_state["index"] = (index + 1) % len(st.session_state["keys"])
-    else:
-        st.markdown("⚠️ No habits found.")
-else:
-    st.markdown("⚠️ Session state not fully initialized.")
-
+# --- Daily Behavior Check-In ---
 st.markdown("---")
+st.header("Daily Behavior Check-In")
 
-# --- Habit Progress Display
-for habit, percent in st.session_state["habits"].items():
-    st.markdown(f"**{habit}** — {percent}%")
-    st.progress(percent / 100)
+for i, row in edited_df.iterrows():
+    behavior = row["Behavior"]
+    percent = row["Probability"]
 
-st.markdown("---")
-st.button("🟣 Situational Stuff")
+    st.markdown(f"**{behavior}** — {percent}%")
+    col1, col2 = st.columns(2)
+    if col1.button(f"✅ Did '{behavior}'", key=f"yes_{i}"):
+        edited_df.at[i, "Probability"] = min(100, percent + 1)
+        edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+    if col2.button(f"❌ Didn't Do '{behavior}'", key=f"no_{i}"):
+        edited_df.at[i, "Probability"] = max(0, percent - 1)
+        edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
