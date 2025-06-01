@@ -8,7 +8,10 @@ def load_csv():
 
 df = load_csv()
 
-edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
+if "updated_df" not in st.session_state:
+    st.session_state.updated_df = df.copy()
+
+edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
 
 # --- Daily Behavior Check-In ---
 st.markdown("---")
@@ -21,10 +24,10 @@ for i, row in edited_df.iterrows():
     st.markdown(f"**{behavior}** — {percent}%")
     col1, col2 = st.columns(2)
     if col1.button(f"✅ Did '{behavior}'", key=f"yes_{i}"):
-        edited_df.at[i, "Probability"] = min(99, max(1, percent + 1))
-        edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
         st.rerun()
     if col2.button(f"❌ Didn't Do '{behavior}'", key=f"no_{i}"):
-        edited_df.at[i, "Probability"] = min(99, max(1, percent - 1))
-        edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
         st.rerun()
