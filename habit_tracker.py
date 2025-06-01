@@ -62,8 +62,8 @@ if not ready_df.empty:
     percent = row["Probability"]
 
     st.markdown(f"""
-        <div style='border: 2px solid #ccc; border-radius: 10px; padding: 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #f9f9f9;'>
-            <h2 style='font-size: 32px;'>{behavior} — {percent}%</h2>
+        <div style='border: 1px solid #444; border-radius: 12px; padding: 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
+            <h2 style='font-size: 36px; color: white;'>{behavior} — {percent}%</h2>
         </div>
     """, unsafe_allow_html=True)
 
