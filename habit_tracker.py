@@ -160,7 +160,7 @@ st.markdown(
 )
 
 try:
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
     if "action" in query_params and "index" in query_params:
         index = int(query_params["index"][0])
         action = query_params["action"][0]
