@@ -52,6 +52,24 @@ ready_df = ready_df.sort_values("Prompt Time")
 if "daily_index" not in st.session_state:
     st.session_state.daily_index = 0
 
+# Add style block here before columns
+st.markdown(
+    """
+    <style>
+    .stButton button {
+        height: 100px;
+        width: 100px;
+        font-size: 64px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # If there are habits to show
 if not ready_df.empty:
     current_index = ready_df.index[st.session_state.daily_index % len(ready_df)]
@@ -69,19 +87,6 @@ if not ready_df.empty:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(
-            """
-            <style>
-            .stButton button {
-                height: 100px;
-                width: 100px;
-                font-size: 48px;
-                border-radius: 12px;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
         if st.button(emoji_down_map.get(behavior, "❌"), key="no_response", use_container_width=True):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
