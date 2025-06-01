@@ -56,25 +56,24 @@ if "daily_index" not in st.session_state:
 st.markdown(
     """
     <style>
-    .stButton button {
-        height: 100px;
-        width: 100px;
-        font-size: 100px;
+    .stButton > button {
+        height: 120px;
+        width: 120px;
+        font-size: 80px;
         border-radius: 12px;
+        text-align: center;
+        padding: 0;
+        line-height: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 0;
-        line-height: 1;
         transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .up-button:hover {
+    .stButton > button:hover {
         transform: scale(1.08);
-        box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
     }
-    .down-button:hover {
-        transform: scale(1.08);
-        box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+    .stButton > button:has-text("✅"), .stButton > button:has-text("🧠") {
+        box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
     }
     </style>
     """,
@@ -94,32 +93,16 @@ if not ready_df.empty:
         </div>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 1])
     with col1:
-        st.markdown(
-            f"""
-            <button class="down-button stButton" onclick="document.getElementById('down_btn_{current_index}').click()" style="all: unset; cursor: pointer;">
-                <span style="display: block; height: 100px; width: 100px; font-size: 100px; text-align: center;">{emoji_down_map.get(behavior, "❌")}</span>
-            </button>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button(" ", key=f"down_btn_{current_index}"):
+        if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_btn_{current_index}", help="Didn't do it today"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
             st.rerun()
     with col2:
-        st.markdown(
-            f"""
-            <button class="up-button stButton" onclick="document.getElementById('up_btn_{current_index}').click()" style="all: unset; cursor: pointer;">
-                <span style="display: block; height: 100px; width: 100px; font-size: 100px; text-align: center;">{emoji_up_map.get(behavior, "✅")}</span>
-            </button>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button("  ", key=f"up_btn_{current_index}"):
+        if st.button(emoji_up_map.get(behavior, "✅"), key=f"up_btn_{current_index}", help="Did it today"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
