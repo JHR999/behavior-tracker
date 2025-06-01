@@ -67,13 +67,14 @@ st.markdown(
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #222;
+        border: 2px solid #444;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
     .stButton > button:hover {
-        transform: scale(1.08);
-    }
-    .stButton > button:has-text("✅"), .stButton > button:has-text("🧠") {
-        box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 255, 0, 0.3);
     }
     </style>
     """,
@@ -95,14 +96,14 @@ if not ready_df.empty:
 
     col1, col2 = st.columns([1, 1])
     with col1:
-        if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_btn_{current_index}", help="Didn't do it today"):
+        if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_btn_{current_index}"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
             st.rerun()
     with col2:
-        if st.button(emoji_up_map.get(behavior, "✅"), key=f"up_btn_{current_index}", help="Did it today"):
+        if st.button(emoji_up_map.get(behavior, "✅"), key=f"up_btn_{current_index}"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
