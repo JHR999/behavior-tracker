@@ -12,7 +12,7 @@ def render_emoji_buttons(behavior, percent, index):
     down_emoji = emoji_down_map.get(behavior, "❌")
     html_code = f"""
     <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px;">
-        <form action="?action=down&index={index}" method="post">
+        <form action="?action=down&index={index}" method="get">
             <button style="
                 font-size: 64px;
                 width: 100px;
@@ -27,7 +27,7 @@ def render_emoji_buttons(behavior, percent, index):
                 {down_emoji}
             </button>
         </form>
-        <form action="?action=up&index={index}" method="post">
+        <form action="?action=up&index={index}" method="get">
             <button style="
                 font-size: 64px;
                 width: 100px;
