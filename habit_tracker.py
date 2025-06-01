@@ -175,7 +175,7 @@ try:
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
                 st.session_state.daily_responses[behavior] = True
                 st.session_state.daily_index += 1
-                st.experimental_set_query_params()
+                st.query_params.clear()
                 st.rerun()
 except Exception as e:
     st.warning(f"⚠️ Could not parse action or index from query parameters. Error: {e}")

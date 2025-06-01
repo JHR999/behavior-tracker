@@ -1,6 +1,6 @@
 Behavior,Probability,Category,Did Today,Prompt Time, + Emoji, - Emoji
 Cold Shower,0,Daily,,12:00,🥶,🔥
-Quick Shower,10,Daily,,12:00,⏩,⌛️
+Quick Shower,10,Daily,,12:00,,
 Carnivore-Only Day,20,Daily,,19:00,🥩,🍪
 Supplements in Morning,90,Daily,,12:00,💊,⏭️
 Morning Gratitude,15,Daily,,12:00,🙏,⏭️
