@@ -23,8 +23,8 @@ for i, row in edited_df.iterrows():
     if col1.button(f"✅ Did '{behavior}'", key=f"yes_{i}"):
         edited_df.at[i, "Probability"] = min(99, max(1, percent + 1))
         edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.experimental_rerun()
+        st.rerun()
     if col2.button(f"❌ Didn't Do '{behavior}'", key=f"no_{i}"):
         edited_df.at[i, "Probability"] = min(99, max(1, percent - 1))
         edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.experimental_rerun()
+        st.rerun()
