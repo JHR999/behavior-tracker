@@ -1,15 +1,19 @@
 import streamlit as st
 
-# --- Setup (Run only once)
-if 'habits' not in st.session_state:
+# --- Safe Setup ---
+if "habits" not in st.session_state:
     st.session_state.habits = {
         "Wake up at 5:30 AM": 74,
         "Morning Walk": 82,
         "Cold Shower": 71,
         "No Sugar": 82
     }
-    st.session_state.index = 0
+
+if "keys" not in st.session_state:
     st.session_state.keys = list(st.session_state.habits.keys())
+
+if "index" not in st.session_state:
+    st.session_state.index = 0
 
 # --- Logic
 current_habit = st.session_state.keys[st.session_state.index]
