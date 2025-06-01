@@ -176,7 +176,7 @@ if "action" in query_params and "index" in query_params:
             st.session_state.daily_index += 1
             try:
                 st.experimental_set_query_params()
-            except st.StreamlitAPIException:
+            except Exception:
                 pass
             st.rerun()
 
