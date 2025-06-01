@@ -1,20 +1,20 @@
-Behavior,Probability,Category,Did Today,Prompt Time
-🥶Cold Shower,0,Daily,,12:00
-⏱️Quick Shower,10,Daily,,12:00
-🥩Carnivore-Only Day,20,Daily,,19:00
-💊Supplements in Morning,90,Daily,,12:00
-🙏Morning Gratitude,15,Daily,,12:00
-🏋️Full Morning Mini-Workout,70,Daily,,12:00
-〰️Floss at Night,50,Daily,,19:00
-🌄Wake up before 7 AM,2,Daily,,12:00
-🏋️Resistance Train,55,Daily,,19:00
-🍪Resisted Junk Food Oppurtunity,30,Situational ,,
-🤔Reflected on Day,80,Daily,,19:00
-📅Planned Next Day,85,Daily,,19:00
-👍Complimented a Stranger When I Had the Urge,10,Situational ,,
-💢Redirected Sexual Energy,10,Situational ,,
-💦Followed Ejaculation Plan,15,Daily,,19:00
-😫Resisted Coming During Sex,12,Situational ,,
-🚭Stayed Sober,50,Daily,,19:00
-〰️Braces Flossed,66,Weekly,,
-🦮Didn't Avoid a Dog,15,Situational ,,
+Behavior,Probability,Category,Did Today,Prompt Time, + Emoji, - Emoji
+Cold Shower,0,Daily,,12:00,🥶,🔥
+Quick Shower,10,Daily,,12:00,⏩,⌛️
+Carnivore-Only Day,20,Daily,,19:00,🥩,🍪
+Supplements in Morning,90,Daily,,12:00,💊,⏭️
+Morning Gratitude,15,Daily,,12:00,🙏,⏭️
+Full Morning Mini-Workout,70,Daily,,12:00,🏋️,⏭️
+Floss at Night,50,Daily,,19:00,〰️,⏭️
+Wake up before 7 AM,2,Daily,,12:00,🌄,⏩
+Resistance Train,55,Daily,,19:00,🏋️,⏭️
+Resisted Junk Food Oppurtunity,30,Situational ,,,⏭️,🍪
+Reflected on Day,80,Daily,,19:00,🤔,⏭️
+Planned Next Day,85,Daily,,19:00,📅,⏭️
+Complimented a Stranger When I Had the Urge,10,Situational ,,,👍,⏭️
+Redirected Sexual Energy,10,Situational ,,,💢,💦
+Followed Ejaculation Plan,15,Daily,,19:00,🧘,💦
+Resisted Coming During Sex,12,Situational ,,,😫,💦
+Stayed Sober,50,Daily,,19:00,🚭,💊
+Braces Flossed,66,Weekly,,,〰️,⏭️
+Didn't Avoid a Dog,15,Situational ,,,🦮,🏃‍♂️‍➡️
