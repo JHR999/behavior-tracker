@@ -133,36 +133,9 @@ st.markdown(
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
 }
 
-/* Fix emoji size inside buttons */
 .stButton > button > span {
     font-size: 60px !important;
     line-height: 1 !important;
-}
-
-/* Center the daily check-in card content */
-.daily-checkin-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #444;
-    border-radius: 12px;
-    padding: 40px 30px 20px 30px;
-    margin: 20px auto;
-    text-align: center;
-    max-width: 600px;
-    background-color: #1e1e1e;
-}
-
-/* Horizontal alignment for emoji buttons container */
-.emoji-buttons-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
 }
 </style>
     """,
