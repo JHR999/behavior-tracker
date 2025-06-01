@@ -56,11 +56,10 @@ if "daily_index" not in st.session_state:
 st.markdown(
     """
 <style>
-/* Base button style */
 .stButton > button {
-    height: 120px;
-    width: 120px;
-    font-size: 140px; /* Increased emoji size */
+    height: 140px;
+    width: 140px;
+    font-size: 100px;
     border-radius: 12px;
     text-align: center;
     padding: 0;
@@ -72,10 +71,9 @@ st.markdown(
     background-color: #222;
     border: 2px solid #444;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    margin: 0 10px; /* Smaller horizontal margin */
+    margin: auto;
 }
 
-/* Glow and border for individual buttons by key match */
 .stButton button[data-testid="button-element"][id*="down_btn_"] {
     border: 2px solid red !important;
 }
@@ -109,7 +107,7 @@ if not ready_df.empty:
         </div>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1, 1], gap="small")
     with col1:
         if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_btn_{current_index}"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
