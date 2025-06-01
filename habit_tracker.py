@@ -22,7 +22,12 @@ if "daily_responses" not in st.session_state or st.session_state.get("last_check
 if "updated_df" not in st.session_state:
     st.session_state.updated_df = df.copy()
 
-edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
+# --- Toggle for Editable Behavior Table ---
+show_table = st.toggle("📝 Edit Behavior Table", value=False)
+if show_table:
+    edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
+else:
+    edited_df = st.session_state.updated_df
 
 # --- Daily Behavior Check-In ---
 st.markdown("---")
