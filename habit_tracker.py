@@ -31,7 +31,6 @@ else:
 
 # --- Daily Behavior Check-In ---
 st.markdown("---")
-st.header("Daily Behavior Check-In")
 
 daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
 
@@ -62,7 +61,7 @@ if not ready_df.empty:
     behavior = row["Behavior"]
     percent = row["Probability"]
     
-    st.markdown(f"**{behavior}** — {percent}%")
+    st.markdown(f"<h2 style='text-align:center'>{behavior} — {percent}%</h2>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     if col1.button(f"✅ Did '{behavior}'", key="current_yes"):
         st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
@@ -83,7 +82,7 @@ if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
-with st.expander("🟣 Situational Logging", expanded=True):
+with st.expander("🟣 Situational Logging", expanded=False):
     situational_df = edited_df[edited_df["Category"].astype(str).str.strip().str.lower() == "situational"]
     if situational_df.empty:
         st.markdown("_⚠️ No situational behaviors found._")
