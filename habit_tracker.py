@@ -39,7 +39,6 @@ st.markdown("---")
 st.header("Daily Behavior Check-In")
 
 daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
-st.write("🧪 Loaded daily behaviors:", len(daily_df))
 
 for i, row in daily_df.iterrows():
     behavior = row["Behavior"]
@@ -80,7 +79,8 @@ if daily_df.empty:
 st.markdown("---")
 with st.expander("🟣 Situational Logging"):
     situational_df = edited_df[edited_df["Category"].str.lower() == "situational"]
-    for i, row in situational_df.iterrows():
+    for i in situational_df.index:
+        row = situational_df.loc[i]
         behavior = row["Behavior"]
         percent = row["Probability"]
         st.markdown(f"**{behavior}** — {percent}%")
