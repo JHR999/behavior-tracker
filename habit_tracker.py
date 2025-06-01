@@ -10,11 +10,11 @@ def load_csv():
 def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
-    
+
     col1, col2 = st.columns([1, 1])
     with col1:
         if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
-            st.session_state["last_change_msg"] = f"<span style='color: red;'>{behavior} chance {percent}% -> {percent - 1}%</span>"
+            st.session_state["last_change_msg"] = f"<span style='color: red;'>{behavior} chance {percent}% → {percent - 1}%</span>"
             st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
@@ -22,7 +22,7 @@ def render_emoji_buttons(behavior, percent, index):
             st.rerun()
     with col2:
         if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
-            st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% -> {percent + 1}%</span>"
+            st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% → {percent + 1}%</span>"
             st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
@@ -99,8 +99,7 @@ st.markdown(
 .stButton > button {
     height: 100px;
     width: 100px;
-    min-width: 100px;
-    font-size: 60px;
+    font-size: 70px;
     border-radius: 12px;
     text-align: center;
     padding: 0;
@@ -111,7 +110,7 @@ st.markdown(
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: #222;
     border: 2px solid #444;
-    margin: 0 auto;
+    margin: auto;
     box-sizing: border-box;
 }
 
@@ -129,20 +128,6 @@ st.markdown(
 .stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
     transform: translateY(-4px);
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
-}
-
-.stButton > button > span {
-    font-size: 60px !important;
-    line-height: 1 !important;
-}
-
-.emoji-buttons-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-    gap: 40px;
-    margin-top: 20px;
 }
 </style>
     """,
