@@ -162,7 +162,7 @@ if not ready_df.empty:
 
     st.markdown(f"""
         <div style='display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #444; border-radius: 12px; padding: 40px 30px 20px 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
-            <h2 style='font-size: 36px; color: white; margin-bottom: 10px;'>{behavior}</h2>
+            <h2 style='font-size: 50px; color: white; margin-bottom: 10px;'>{behavior}</h2>
             <p style='font-size: 20px; color: #ccc; margin: 0;'>{percent}% Chance</p>
         </div>
     """, unsafe_allow_html=True)
