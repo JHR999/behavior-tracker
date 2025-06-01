@@ -159,26 +159,26 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-query_params = st.query_params
-if "action" in query_params and "index" in query_params:
-    index = int(query_params["index"])
-    action = query_params["action"]
-    if 0 <= index < len(st.session_state.updated_df):
-        behavior = st.session_state.updated_df.at[index, "Behavior"]
-        percent = st.session_state.updated_df.at[index, "Probability"]
-        if behavior not in st.session_state.daily_responses:
-            if action == "up":
-                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-            elif action == "down":
-                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            try:
+try:
+    query_params = st.experimental_get_query_params()
+    if "action" in query_params and "index" in query_params:
+        index = int(query_params["index"][0])
+        action = query_params["action"][0]
+        if 0 <= index < len(st.session_state.updated_df):
+            behavior = st.session_state.updated_df.at[index, "Behavior"]
+            percent = st.session_state.updated_df.at[index, "Probability"]
+            if behavior not in st.session_state.daily_responses:
+                if action == "up":
+                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+                elif action == "down":
+                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.session_state.daily_responses[behavior] = True
+                st.session_state.daily_index += 1
                 st.experimental_set_query_params()
-            except Exception:
-                pass
-            st.rerun()
+                st.rerun()
+except Exception as e:
+    st.warning(f"⚠️ Could not parse action or index from query parameters. Error: {e}")
 
 import time
 
