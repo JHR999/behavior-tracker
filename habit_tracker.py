@@ -59,7 +59,7 @@ st.markdown(
 .stButton > button {
     height: 140px;
     width: 140px;
-    font-size: 400px;
+    font-size: 10000px;
     border-radius: 12px;
     text-align: center;
     padding: 0;
