@@ -23,7 +23,7 @@ def render_emoji_buttons(behavior, percent, index):
             st.rerun()
     with col2:
         if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
-            st.session_state["last_change_msg"] = f"{behavior} chance {percent}% -> {percent + 1}%"
+            st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% -> {percent + 1}%</span>"
             st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
