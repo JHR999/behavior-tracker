@@ -9,11 +9,6 @@ def load_csv():
 
 df = load_csv()
 
-# Insert Prompt Time column if not present, only for non-situational categories
-if "Prompt Time" not in df.columns:
-    df["Prompt Time"] = df["Category"].apply(lambda x: "08:00" if str(x).lower() != "situational" else "")
-    df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-
 today_str = date.today().isoformat()
 if "daily_responses" not in st.session_state or st.session_state.get("last_checked") != today_str:
     st.session_state.daily_responses = {}
