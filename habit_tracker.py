@@ -33,7 +33,9 @@ else:
 st.markdown("---")
 st.header("Daily Behavior Check-In")
 
-for i, row in edited_df.iterrows():
+daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
+
+for i, row in daily_df.iterrows():
     behavior = row["Behavior"]
     percent = row["Probability"]
 
@@ -63,3 +65,20 @@ for i, row in edited_df.iterrows():
         st.markdown("_✅ Already answered today_")
     else:
         st.markdown("_⏳ Waiting for scheduled time..._")
+
+st.markdown("---")
+with st.expander("🟣 Situational Logging"):
+    situational_df = edited_df[edited_df["Category"].str.lower() == "situational"]
+    for i, row in situational_df.iterrows():
+        behavior = row["Behavior"]
+        percent = row["Probability"]
+        st.markdown(f"**{behavior}** — {percent}%")
+        col1, col2 = st.columns(2)
+        if col1.button(f"⬆️ Level Up '{behavior}'", key=f"situational_yes_{i}"):
+            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.rerun()
+        if col2.button(f"⬇️ Level Down '{behavior}'", key=f"situational_no_{i}"):
+            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.rerun()
