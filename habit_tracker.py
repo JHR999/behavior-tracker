@@ -35,38 +35,49 @@ st.header("Daily Behavior Check-In")
 
 daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
 
-for i, row in daily_df.iterrows():
+# Filter behaviors ready to be answered
+ready_df = daily_df.copy()
+ready_df["Prompt Time"] = ready_df["Prompt Time"].astype(str).str.strip()
+ready_df = ready_df[ready_df["Prompt Time"] != ""]
+ready_df["Scheduled"] = pd.to_datetime(ready_df["Prompt Time"], format="%H:%M", errors="coerce").dt.time
+now = datetime.now().time()
+
+# Only show behaviors that are scheduled and unanswered
+ready_df = ready_df[
+    ready_df["Scheduled"].apply(lambda t: t is not pd.NaT and now >= t)
+    & ~ready_df["Behavior"].isin(st.session_state.daily_responses)
+]
+
+# Sort to make experience consistent
+ready_df = ready_df.sort_values("Prompt Time")
+
+# Track progress index
+if "daily_index" not in st.session_state:
+    st.session_state.daily_index = 0
+
+# If there are habits to show
+if not ready_df.empty:
+    current_index = ready_df.index[st.session_state.daily_index % len(ready_df)]
+    row = ready_df.loc[current_index]
     behavior = row["Behavior"]
     percent = row["Probability"]
-
-    scheduled_time_str = row.get("Prompt Time", "00:00")
-    if not scheduled_time_str or not isinstance(scheduled_time_str, str) or scheduled_time_str.strip() == "":
-        continue
-    try:
-        scheduled_time = datetime.strptime(scheduled_time_str.strip(), "%H:%M").time()
-    except ValueError:
-        continue
-
-    now = datetime.now().time()
-    answered = st.session_state.daily_responses.get(behavior, False)
-
+    
     st.markdown(f"**{behavior}** — {percent}%")
-    if now >= scheduled_time and not answered:
-        col1, col2 = st.columns(2)
-        if col1.button(f"✅ Did '{behavior}'", key=f"yes_{i}"):
-            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.rerun()
-        if col2.button(f"❌ Didn't Do '{behavior}'", key=f"no_{i}"):
-            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.rerun()
-    elif answered:
-        st.markdown("_✅ Already answered today_")
-    else:
-        st.markdown("_⏳ Waiting for scheduled time..._")
+    col1, col2 = st.columns(2)
+    if col1.button(f"✅ Did '{behavior}'", key="current_yes"):
+        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.daily_responses[behavior] = True
+        st.session_state.daily_index += 1
+        st.rerun()
+    if col2.button(f"❌ Didn't Do '{behavior}'", key="current_no"):
+        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.daily_responses[behavior] = True
+        st.session_state.daily_index += 1
+        st.rerun()
+else:
+    st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
 if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
