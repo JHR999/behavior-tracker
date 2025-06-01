@@ -66,14 +66,14 @@ if not ready_df.empty:
     with col2:
         col_yes, col_gap, col_no = st.columns([1, 0.2, 1])
         with col_yes:
-            if st.button(f"✅ Did", key="current_yes"):
+            if st.button("✅", key="current_yes"):
                 st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
                 st.session_state.daily_responses[behavior] = True
                 st.session_state.daily_index += 1
                 st.rerun()
         with col_no:
-            if st.button(f"❌ Didn't Do", key="current_no"):
+            if st.button("❌", key="current_no"):
                 st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
                 st.session_state.daily_responses[behavior] = True
