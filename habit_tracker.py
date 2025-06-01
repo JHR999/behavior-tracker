@@ -97,10 +97,10 @@ st.markdown(
     """
 <style>
 .stButton > button {
-    height: 100px;
-    width: 100px;
-    font-size: 70px;
-    border-radius: 12px;
+    height: 110px;
+    width: 110px;
+    font-size: 90px;
+    border-radius: 16px;
     text-align: center;
     padding: 0;
     line-height: 1;
@@ -108,26 +108,26 @@ st.markdown(
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background-color: #222;
-    border: 2px solid #444;
-    margin: auto;
+    background-color: #111;
+    border: 3px solid #444;
+    margin: 0 10px;
     box-sizing: border-box;
 }
 
 .stButton button[data-testid="button-element"][id*="down_btn_"] {
-    border: 2px solid red !important;
+    border: 3px solid red !important;
 }
 .stButton button[data-testid="button-element"][id*="down_btn_"]:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4);
+    transform: translateY(-6px);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9), 0 0 40px rgba(255, 0, 0, 0.6);
 }
 
 .stButton button[data-testid="button-element"][id*="up_btn_"] {
-    border: 2px solid #00ff00 !important;
+    border: 3px solid #00ff00 !important;
 }
 .stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
+    transform: translateY(-6px);
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.9), 0 0 40px rgba(0, 255, 0, 0.6);
 }
 </style>
     """,
