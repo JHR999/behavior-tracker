@@ -69,15 +69,41 @@ if not ready_df.empty:
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button(emoji_up_map.get(behavior, "✅"), key="yes_response", use_container_width=True):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
+        st.markdown(
+            f"""
+            <style>
+            div.stButton > button:first-child {{
+                height: 100px;
+                width: 100px;
+                font-size: 48px;
+                border-radius: 12px;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        if st.button(emoji_down_map.get(behavior, "❌"), key="no_response", use_container_width=True, height=100):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
             st.rerun()
     with col2:
-        if st.button(emoji_down_map.get(behavior, "❌"), key="no_response", use_container_width=True):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
+        st.markdown(
+            f"""
+            <style>
+            div.stButton > button:first-child {{
+                height: 100px;
+                width: 100px;
+                font-size: 48px;
+                border-radius: 12px;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+        if st.button(emoji_up_map.get(behavior, "✅"), key="yes_response", use_container_width=True, height=100):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
