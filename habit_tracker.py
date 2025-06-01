@@ -1,10 +1,50 @@
 import pandas as pd
 import streamlit as st
 from datetime import datetime, date, time
+from streamlit.components.v1 import html
 
 # --- Dynamic Table for Editing Behaviors ---
 def load_csv():
     return pd.read_csv("Behavior Tracking - Sheet1.csv")
+
+def render_emoji_buttons(behavior, percent, index):
+    up_emoji = emoji_up_map.get(behavior, "✅")
+    down_emoji = emoji_down_map.get(behavior, "❌")
+    html_code = f"""
+    <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px;">
+        <form action="?action=down&index={index}" method="post">
+            <button style="
+                font-size: 64px;
+                width: 100px;
+                height: 100px;
+                border-radius: 12px;
+                background-color: #1e1e1e;
+                border: 2px solid red;
+                box-shadow: 0 6px 12px rgba(255, 0, 0, 0.4);
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                {down_emoji}
+            </button>
+        </form>
+        <form action="?action=up&index={index}" method="post">
+            <button style="
+                font-size: 64px;
+                width: 100px;
+                height: 100px;
+                border-radius: 12px;
+                background-color: #1e1e1e;
+                border: 2px solid lime;
+                box-shadow: 0 6px 12px rgba(0, 255, 0, 0.4);
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                {up_emoji}
+            </button>
+        </form>
+    </div>
+    """
+    html(html_code, height=180)
 
 df = load_csv()
 # Clean up column names (strip whitespace)
@@ -94,6 +134,23 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+query_params = st.query_params
+if "action" in query_params and "index" in query_params:
+    index = int(query_params["index"])
+    action = query_params["action"]
+    if 0 <= index < len(st.session_state.updated_df):
+        behavior = st.session_state.updated_df.at[index, "Behavior"]
+        percent = st.session_state.updated_df.at[index, "Probability"]
+        if behavior not in st.session_state.daily_responses:
+            if action == "up":
+                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+            elif action == "down":
+                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
+
 # If there are habits to show
 if not ready_df.empty:
     current_index = ready_df.index[st.session_state.daily_index % len(ready_df)]
@@ -107,21 +164,7 @@ if not ready_df.empty:
         </div>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1, 1], gap="small")
-    with col1:
-        if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_btn_{current_index}"):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            st.rerun()
-    with col2:
-        if st.button(emoji_up_map.get(behavior, "✅"), key=f"up_btn_{current_index}"):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            st.rerun()
+    render_emoji_buttons(behavior, percent, current_index)
 else:
     st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
