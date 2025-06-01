@@ -60,23 +60,25 @@ if not ready_df.empty:
     row = ready_df.loc[current_index]
     behavior = row["Behavior"]
     percent = row["Probability"]
-    
+
     st.markdown(f"<h2 style='text-align:center'>{behavior} — {percent}%</h2>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 0.05, 1])
-    with col1:
-        if st.button(f"✅ Did", key="current_yes"):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            st.rerun()
-    with col3:
-        if st.button(f"❌ Didn't Do", key="current_no"):
-            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            st.rerun()
+    col1, col2, col3 = st.columns([0.5, 1, 0.5])
+    with col2:
+        col_yes, col_gap, col_no = st.columns([1, 0.2, 1])
+        with col_yes:
+            if st.button(f"✅ Did", key="current_yes"):
+                st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.session_state.daily_responses[behavior] = True
+                st.session_state.daily_index += 1
+                st.rerun()
+        with col_no:
+            if st.button(f"❌ Didn't Do", key="current_no"):
+                st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.session_state.daily_responses[behavior] = True
+                st.session_state.daily_index += 1
+                st.rerun()
 else:
     st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
