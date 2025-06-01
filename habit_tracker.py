@@ -18,19 +18,21 @@ def initialize_session():
 initialize_session()
 
 # --- Logic
-current_habit = st.session_state.keys[st.session_state.index]
 
-st.markdown(f"### Did you do **{current_habit}** today?")
+if st.session_state.keys:
+    current_habit = st.session_state.keys[st.session_state.index]
 
-col1, col2 = st.columns(2)
-if col1.button("✅ Yes"):
-    st.session_state.habits[current_habit] = min(100, st.session_state.habits[current_habit] + 1)
-    st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
-elif col2.button("❌ No"):
-    st.session_state.habits[current_habit] = max(0, st.session_state.habits[current_habit] - 1)
-    st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
+    st.markdown(f"### Did you do **{current_habit}** today?")
 
-st.markdown("---")
+    col1, col2 = st.columns(2)
+    if col1.button("✅ Yes"):
+        st.session_state.habits[current_habit] = min(100, st.session_state.habits[current_habit] + 1)
+        st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
+    elif col2.button("❌ No"):
+        st.session_state.habits[current_habit] = max(0, st.session_state.habits[current_habit] - 1)
+        st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
+else:
+    st.markdown("⚠️ No habits found.")
 
 # --- Habit Progress Display
 for habit, percent in st.session_state.habits.items():
