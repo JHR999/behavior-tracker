@@ -151,6 +151,10 @@ if "action" in query_params and "index" in query_params:
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
+            try:
+                st.experimental_set_query_params()
+            except st.StreamlitAPIException:
+                pass
             st.rerun()
 
 # If there are habits to show
