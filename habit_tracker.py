@@ -101,6 +101,7 @@ st.markdown(
 .stButton > button {
     height: 100px;
     width: 100px;
+    min-width: 100px;
     font-size: 60px;
     border-radius: 12px;
     text-align: center;
@@ -113,6 +114,7 @@ st.markdown(
     background-color: #222;
     border: 2px solid #444;
     margin: 0 10px;
+    box-sizing: border-box;
 }
 
 .stButton button[data-testid="button-element"][id*="down_btn_"] {
@@ -156,6 +158,10 @@ st.markdown(
 .emoji-buttons-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
     margin-top: 20px;
 }
 </style>
