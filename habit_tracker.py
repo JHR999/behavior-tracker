@@ -87,33 +87,24 @@ if not ready_df.empty:
     st.markdown(f"""
         <div style='border: 1px solid #444; border-radius: 12px; padding: 40px 30px 20px 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
             <h2 style='font-size: 36px; color: white; margin-bottom: 30px;'>{behavior} — {percent}% Chance</h2>
-            <div style='display: flex; justify-content: center; gap: 60px;'>
-                <form action="" method="get">
-                    <button name="response" value="no" style="height: 100px; width: 100px; font-size: 100px; border-radius: 12px; background-color: #333; color: white; border: none; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 0 12px rgba(255,255,255,0.3)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">{emoji_down_map.get(behavior, "❌")}</button>
-                </form>
-                <form action="" method="get">
-                    <button name="response" value="yes" style="height: 100px; width: 100px; font-size: 100px; border-radius: 12px; background-color: #333; color: white; border: none; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 0 12px rgba(255,255,255,0.3)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">{emoji_up_map.get(behavior, "✅")}</button>
-                </form>
-            </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Detect button clicks via query params
-    if st.query_params.get("response") == "yes":
-        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.experimental_set_query_params()
-        st.rerun()
-
-    if st.query_params.get("response") == "no":
-        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.experimental_set_query_params()
-        st.rerun()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button(emoji_down_map.get(behavior, "❌"), key=f"down_{current_index}"):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
+    with col2:
+        if st.button(emoji_up_map.get(behavior, "✅"), key=f"up_{current_index}"):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
 else:
     st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
