@@ -170,7 +170,9 @@ if "action" in query_params and "index" in query_params:
                 pass
             st.rerun()
 
-# If there are habits to show
+import time
+
+# --- Daily Behavior Card Rendering ---
 if not ready_df.empty:
     current_index = ready_df.index[st.session_state.daily_index % len(ready_df)]
     row = ready_df.loc[current_index]
@@ -184,23 +186,17 @@ if not ready_df.empty:
         </div>
     """, unsafe_allow_html=True)
 
-import time
-
-if st.session_state.get("last_change_msg"):
-    placeholder = st.empty()
-    with placeholder:
-        st.success(st.session_state["last_change_msg"])
-    time.sleep(7)
-    placeholder.empty()
-    st.session_state["last_change_msg"] = ""
-
     # Render emoji buttons horizontally centered below the card
     with st.container():
         st.markdown('<div class="emoji-buttons-container">', unsafe_allow_html=True)
         render_emoji_buttons(behavior, percent, current_index)
         st.markdown('</div>', unsafe_allow_html=True)
 else:
-    st.markdown("_✅ All check-ins completed or not yet scheduled._")
+    st.markdown(f"""
+        <div class="daily-checkin-card">
+            <h2 style='font-size: 30px; color: white; margin-bottom: 10px;'>✅ All check-ins completed or not yet scheduled.</h2>
+        </div>
+    """, unsafe_allow_html=True)
 
 if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
