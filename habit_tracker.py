@@ -40,10 +40,12 @@ for i, row in daily_df.iterrows():
     percent = row["Probability"]
 
     scheduled_time_str = row.get("Prompt Time", "00:00")
+    if not scheduled_time_str or not isinstance(scheduled_time_str, str) or scheduled_time_str.strip() == "":
+        continue
     try:
-        scheduled_time = datetime.strptime(scheduled_time_str, "%H:%M").time()
+        scheduled_time = datetime.strptime(scheduled_time_str.strip(), "%H:%M").time()
     except ValueError:
-        scheduled_time = time(0, 0)
+        continue
 
     now = datetime.now().time()
     answered = st.session_state.daily_responses.get(behavior, False)
