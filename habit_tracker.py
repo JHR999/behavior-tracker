@@ -60,7 +60,7 @@ st.markdown(
 .stButton > button {
     height: 120px;
     width: 120px;
-    font-size: 80px;
+    font-size: 100px; /* Increased emoji size */
     border-radius: 12px;
     text-align: center;
     padding: 0;
@@ -72,6 +72,7 @@ st.markdown(
     background-color: #222;
     border: 2px solid #444;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    margin: auto; /* Center horizontally */
 }
 
 /* Glow and border for individual buttons by key match */
@@ -80,7 +81,7 @@ st.markdown(
 }
 .stButton button[data-testid="button-element"][id*="down_btn_"]:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), 0 0 30px rgba(255, 0, 0, 0.4);
 }
 
 .stButton button[data-testid="button-element"][id*="up_btn_"] {
@@ -88,7 +89,7 @@ st.markdown(
 }
 .stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 255, 0, 0.4);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
 }
 </style>
     """,
