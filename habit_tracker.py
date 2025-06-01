@@ -19,6 +19,10 @@ if "daily_responses" not in st.session_state or st.session_state.get("last_check
 if "updated_df" not in st.session_state:
     st.session_state.updated_df = df.copy()
 
+# Ensure "Prompt Time" column exists in updated_df (in case session data lost it)
+if "Prompt Time" not in st.session_state.updated_df.columns:
+    st.session_state.updated_df["Prompt Time"] = df["Prompt Time"]
+
 # --- Toggle for Editable Behavior Table ---
 show_table = st.toggle("📝 Edit Behavior Table", value=False)
 if show_table:
