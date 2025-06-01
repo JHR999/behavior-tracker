@@ -7,6 +7,7 @@ def load_csv():
     return pd.read_csv("Behavior Tracking - Sheet1.csv")
 
 df = load_csv()
+df["Probability"] = pd.to_numeric(df["Probability"], errors="coerce").fillna(50).astype(int)
 if "Prompt Time" not in df.columns:
     df["Prompt Time"] = ""
 
