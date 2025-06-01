@@ -184,8 +184,15 @@ if not ready_df.empty:
         </div>
     """, unsafe_allow_html=True)
 
-    if st.session_state.get("last_change_msg"):
+import time
+
+if st.session_state.get("last_change_msg"):
+    placeholder = st.empty()
+    with placeholder:
         st.success(st.session_state["last_change_msg"])
+    time.sleep(7)
+    placeholder.empty()
+    st.session_state["last_change_msg"] = ""
 
     # Render emoji buttons horizontally centered below the card
     with st.container():
