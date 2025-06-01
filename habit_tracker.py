@@ -22,17 +22,10 @@ st.session_state.updated_df = df.copy()
 if "Prompt Time" not in st.session_state.updated_df.columns:
     st.session_state.updated_df["Prompt Time"] = df["Prompt Time"]
 
-# --- Toggle for Editable Behavior Table ---
-show_table = st.toggle("📝 Edit Behavior Table", value=False)
-if show_table:
-    edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
-else:
-    edited_df = st.session_state.updated_df
-
 # --- Daily Behavior Check-In ---
 st.markdown("---")
 
-daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
+daily_df = st.session_state.updated_df[st.session_state.updated_df["Category"].str.lower() != "situational"]
 
 # Filter behaviors ready to be answered
 ready_df = daily_df.copy()
@@ -97,23 +90,32 @@ if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
-st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-with st.expander("🟣  **Situational Behaviors**  ", expanded=False):
-    situational_df = edited_df[edited_df["Category"].astype(str).str.strip().str.lower() == "situational"]
-    if situational_df.empty:
-        st.markdown("_⚠️ No situational behaviors found._")
-    for i in situational_df.index:
-        row = situational_df.loc[i]
-        behavior = row["Behavior"]
-        percent = row["Probability"]
-        st.markdown(f"**{behavior}** — {percent}% Chance")
-        col1, col2 = st.columns(2)
-        if col1.button(f"⬆️ Level Up '{behavior}'", key=f"situational_yes_{i}"):
-            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.rerun()
-        if col2.button(f"⬇️ Level Down '{behavior}'", key=f"situational_no_{i}"):
-            st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.rerun()
-st.markdown("</div>", unsafe_allow_html=True)
+
+with st.container():
+    st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
+    with st.expander("🟣  **Situational Behaviors**  ", expanded=False):
+        situational_df = st.session_state.updated_df[st.session_state.updated_df["Category"].astype(str).str.strip().str.lower() == "situational"]
+        if situational_df.empty:
+            st.markdown("_⚠️ No situational behaviors found._")
+        for i in situational_df.index:
+            row = situational_df.loc[i]
+            behavior = row["Behavior"]
+            percent = row["Probability"]
+            st.markdown(f"**{behavior}** — {percent}% Chance")
+            col1, col2 = st.columns(2)
+            if col1.button(f"⬆️ Level Up '{behavior}'", key=f"situational_yes_{i}"):
+                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.rerun()
+            if col2.button(f"⬇️ Level Down '{behavior}'", key=f"situational_no_{i}"):
+                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- Toggle for Editable Behavior Table ---
+show_table = st.toggle("📝 Edit Behavior Table", value=False)
+if show_table:
+    edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
+else:
+    edited_df = st.session_state.updated_df
