@@ -19,8 +19,8 @@ def render_emoji_buttons(behavior, percent, index):
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
+            # Show feedback message before rerun
             st.rerun()
-            st.session_state["last_change_msg"] = ""
     with col2:
         if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
             st.session_state["last_change_msg"] = f"{behavior} chance {percent}% -> {percent + 1}%"
@@ -28,8 +28,8 @@ def render_emoji_buttons(behavior, percent, index):
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
+            # Show feedback message before rerun
             st.rerun()
-            st.session_state["last_change_msg"] = ""
 
 df = load_csv()
 # Clean up column names (strip whitespace)
@@ -56,6 +56,14 @@ if "last_change_msg" not in st.session_state:
     st.session_state["last_change_msg"] = ""
 
 # --- Daily Behavior Check-In ---
+
+# Display last change message if available (centered, green, and for 7 seconds)
+if st.session_state["last_change_msg"]:
+    st.markdown(f"<p style='text-align: center; color: #00ff00; font-size: 24px;'>{st.session_state['last_change_msg']}</p>", unsafe_allow_html=True)
+    import time
+    time.sleep(7)
+    st.session_state["last_change_msg"] = ""
+
 st.markdown("---")
 
 daily_df = st.session_state.updated_df[st.session_state.updated_df["Category"].str.lower() != "situational"]
