@@ -77,8 +77,10 @@ if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
-with st.expander("🟣 Situational Logging"):
+with st.expander("🟣 Situational Logging", expanded=True):
     situational_df = edited_df[edited_df["Category"].str.lower() == "situational"]
+    if situational_df.empty:
+        st.markdown("_⚠️ No situational behaviors found._")
     for i in situational_df.index:
         row = situational_df.loc[i]
         behavior = row["Behavior"]
