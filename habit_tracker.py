@@ -31,6 +31,7 @@ st.markdown("---")
 st.header("Daily Behavior Check-In")
 
 daily_df = edited_df[edited_df["Category"].str.lower() != "situational"]
+st.write("🧪 Loaded daily behaviors:", len(daily_df))
 
 for i, row in daily_df.iterrows():
     behavior = row["Behavior"]
@@ -64,6 +65,9 @@ for i, row in daily_df.iterrows():
         st.markdown("_✅ Already answered today_")
     else:
         st.markdown("_⏳ Waiting for scheduled time..._")
+
+if daily_df.empty:
+    st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
 with st.expander("🟣 Situational Logging"):
