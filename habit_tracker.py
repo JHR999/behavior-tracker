@@ -21,8 +21,8 @@ for i, row in edited_df.iterrows():
     st.markdown(f"**{behavior}** — {percent}%")
     col1, col2 = st.columns(2)
     if col1.button(f"✅ Did '{behavior}'", key=f"yes_{i}"):
-        edited_df.at[i, "Probability"] = min(100, percent + 1)
+        edited_df.at[i, "Probability"] = min(99, max(1, percent + 1))
         edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
     if col2.button(f"❌ Didn't Do '{behavior}'", key=f"no_{i}"):
-        edited_df.at[i, "Probability"] = max(0, percent - 1)
+        edited_df.at[i, "Probability"] = min(99, max(1, percent - 1))
         edited_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
