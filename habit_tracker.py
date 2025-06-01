@@ -60,7 +60,7 @@ st.markdown(
 .stButton > button {
     height: 120px;
     width: 120px;
-    font-size: 100px; /* Increased emoji size */
+    font-size: 140px; /* Increased emoji size */
     border-radius: 12px;
     text-align: center;
     padding: 0;
@@ -72,7 +72,7 @@ st.markdown(
     background-color: #222;
     border: 2px solid #444;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    margin: auto; /* Center horizontally */
+    margin: 0 10px; /* Smaller horizontal margin */
 }
 
 /* Glow and border for individual buttons by key match */
