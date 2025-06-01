@@ -55,28 +55,43 @@ if "daily_index" not in st.session_state:
 # Add style block here before columns
 st.markdown(
     """
-    <style>
-    .stButton > button {
-        height: 120px;
-        width: 120px;
-        font-size: 80px;
-        border-radius: 12px;
-        text-align: center;
-        padding: 0;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        background-color: #222;
-        border: 2px solid #444;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    }
-    .stButton > button:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 16px rgba(0, 255, 0, 0.3);
-    }
-    </style>
+<style>
+/* Base button style */
+.stButton > button {
+    height: 120px;
+    width: 120px;
+    font-size: 80px;
+    border-radius: 12px;
+    text-align: center;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #222;
+    border: 2px solid #444;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Downvote - red border and glow */
+.stButton > div:has(#down_btn_) > button {
+    border-color: red;
+}
+.stButton > div:has(#down_btn_):hover > button {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(255, 0, 0, 0.4);
+}
+
+/* Upvote - green border and glow */
+.stButton > div:has(#up_btn_) > button {
+    border-color: #00ff00;
+}
+.stButton > div:has(#up_btn_):hover > button {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 255, 0, 0.4);
+}
+</style>
     """,
     unsafe_allow_html=True,
 )
