@@ -109,6 +109,34 @@ st.markdown(
     transform: translateY(-4px);
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
 }
+
+/* Fix emoji size inside buttons */
+.stButton > button > span {
+    font-size: 60px !important;
+    line-height: 1 !important;
+}
+
+/* Center the daily check-in card content */
+.daily-checkin-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 40px 30px 20px 30px;
+    margin: 20px auto;
+    text-align: center;
+    max-width: 600px;
+    background-color: #1e1e1e;
+}
+
+/* Horizontal alignment for emoji buttons container */
+.emoji-buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
 </style>
     """,
     unsafe_allow_html=True,
@@ -143,13 +171,17 @@ if not ready_df.empty:
     percent = row["Probability"]
 
     st.markdown(f"""
-        <div style='display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #444; border-radius: 12px; padding: 40px 30px 20px 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
+        <div class="daily-checkin-card">
             <h2 style='font-size: 50px; color: white; margin-bottom: 10px;'>{behavior}</h2>
             <p style='font-size: 20px; color: #ccc; margin: 0;'>{percent}% Chance</p>
         </div>
     """, unsafe_allow_html=True)
 
-    render_emoji_buttons(behavior, percent, current_index)
+    # Render emoji buttons horizontally centered below the card
+    with st.container():
+        st.markdown('<div class="emoji-buttons-container">', unsafe_allow_html=True)
+        render_emoji_buttons(behavior, percent, current_index)
+        st.markdown('</div>', unsafe_allow_html=True)
 else:
     st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
