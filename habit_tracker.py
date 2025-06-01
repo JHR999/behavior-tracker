@@ -19,20 +19,26 @@ initialize_session()
 
 # --- Logic
 
-if st.session_state.keys:
-    current_habit = st.session_state.keys[st.session_state.index]
+# --- Logic
+if "keys" in st.session_state and "index" in st.session_state:
+    if st.session_state.keys:
+        # Safety check: clamp index
+        index = st.session_state.index % len(st.session_state.keys)
+        current_habit = st.session_state.keys[index]
 
-    st.markdown(f"### Did you do **{current_habit}** today?")
+        st.markdown(f"### Did you do **{current_habit}** today?")
 
-    col1, col2 = st.columns(2)
-    if col1.button("✅ Yes"):
-        st.session_state.habits[current_habit] = min(100, st.session_state.habits[current_habit] + 1)
-        st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
-    elif col2.button("❌ No"):
-        st.session_state.habits[current_habit] = max(0, st.session_state.habits[current_habit] - 1)
-        st.session_state.index = (st.session_state.index + 1) % len(st.session_state.keys)
+        col1, col2 = st.columns(2)
+        if col1.button("✅ Yes"):
+            st.session_state.habits[current_habit] = min(100, st.session_state.habits[current_habit] + 1)
+            st.session_state.index = (index + 1) % len(st.session_state.keys)
+        elif col2.button("❌ No"):
+            st.session_state.habits[current_habit] = max(0, st.session_state.habits[current_habit] - 1)
+            st.session_state.index = (index + 1) % len(st.session_state.keys)
+    else:
+        st.markdown("⚠️ No habits found.")
 else:
-    st.markdown("⚠️ No habits found.")
+    st.markdown("⚠️ Session state not fully initialized.")
 
 # --- Habit Progress Display
 for habit, percent in st.session_state.habits.items():
@@ -41,3 +47,6 @@ for habit, percent in st.session_state.habits.items():
 
 st.markdown("---")
 st.button("🟣 Situational Stuff")
+
+#ddsd
+
