@@ -60,8 +60,14 @@ if "last_change_msg" not in st.session_state:
 # Display last change message if available (centered, font size 24px, custom color via HTML span)
 if st.session_state["last_change_msg"]:
     st.markdown(f"<p style='text-align: center; font-size: 24px;'>{st.session_state['last_change_msg']}</p>", unsafe_allow_html=True)
-    import time
-    time.sleep(7)
+    st.markdown("""
+    <script>
+      setTimeout(function() {
+        var el = window.parent.document.querySelector('[data-testid="stMarkdownContainer"] > div');
+        if (el) { el.style.display = 'none'; }
+      }, 7000);
+    </script>
+    """, unsafe_allow_html=True)
     st.session_state["last_change_msg"] = ""
 
 st.markdown("---")
