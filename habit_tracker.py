@@ -14,18 +14,22 @@ def render_emoji_buttons(behavior, percent, index):
     col1, col2 = st.columns([1, 1])
     with col1:
         if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
+            st.session_state["last_change_msg"] = f"{behavior} chance {percent}% -> {percent - 1}%"
             st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
             st.rerun()
+            st.session_state["last_change_msg"] = ""
     with col2:
         if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
+            st.session_state["last_change_msg"] = f"{behavior} chance {percent}% -> {percent + 1}%"
             st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.session_state.daily_responses[behavior] = True
             st.session_state.daily_index += 1
             st.rerun()
+            st.session_state["last_change_msg"] = ""
 
 df = load_csv()
 # Clean up column names (strip whitespace)
@@ -47,6 +51,9 @@ st.session_state.updated_df = df.copy()
 # Ensure "Prompt Time" column exists in updated_df (in case session data lost it)
 if "Prompt Time" not in st.session_state.updated_df.columns:
     st.session_state.updated_df["Prompt Time"] = df["Prompt Time"]
+
+if "last_change_msg" not in st.session_state:
+    st.session_state["last_change_msg"] = ""
 
 # --- Daily Behavior Check-In ---
 st.markdown("---")
@@ -176,6 +183,9 @@ if not ready_df.empty:
             <p style='font-size: 20px; color: #ccc; margin: 0;'>{percent}% Chance</p>
         </div>
     """, unsafe_allow_html=True)
+
+    if st.session_state.get("last_change_msg"):
+        st.success(st.session_state["last_change_msg"])
 
     # Render emoji buttons horizontally centered below the card
     with st.container():
