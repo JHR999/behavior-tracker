@@ -11,25 +11,23 @@ def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
     
-    col1, col2, _ = st.columns([1, 1, 1])
-    with col1:
-        if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
-            st.session_state["last_change_msg"] = f"<span style='color: red;'>{behavior} chance {percent}% -> {percent - 1}%</span>"
-            st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            # Show feedback message before rerun
-            st.rerun()
-    with col2:
-        if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
-            st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% -> {percent + 1}%</span>"
-            st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.session_state.daily_responses[behavior] = True
-            st.session_state.daily_index += 1
-            # Show feedback message before rerun
-            st.rerun()
+    st.markdown('<div class="emoji-buttons-container">', unsafe_allow_html=True)
+    if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
+        st.session_state["last_change_msg"] = f"<span style='color: red;'>{behavior} chance {percent}% -> {percent - 1}%</span>"
+        st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.daily_responses[behavior] = True
+        st.session_state.daily_index += 1
+        st.rerun()
+
+    if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
+        st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% -> {percent + 1}%</span>"
+        st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+        st.session_state.daily_responses[behavior] = True
+        st.session_state.daily_index += 1
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 df = load_csv()
 # Clean up column names (strip whitespace)
@@ -141,7 +139,10 @@ st.markdown(
 .emoji-buttons-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: row;
     gap: 40px;
+    margin-top: 20px;
 }
 </style>
     """,
