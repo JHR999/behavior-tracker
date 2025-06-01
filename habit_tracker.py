@@ -78,9 +78,9 @@ st.markdown(
     """
 <style>
 .stButton > button {
-    height: 140px;
-    width: 140px;
-    font-size: 10000px;
+    height: 100px;
+    width: 100px;
+    font-size: 60px;
     border-radius: 12px;
     text-align: center;
     padding: 0;
@@ -91,13 +91,11 @@ st.markdown(
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: #222;
     border: 2px solid #444;
-    box-shadow: none;
-    margin: auto;
+    margin: 0 10px;
 }
 
 .stButton button[data-testid="button-element"][id*="down_btn_"] {
     border: 2px solid red !important;
-    box-shadow: none !important;
 }
 .stButton button[data-testid="button-element"][id*="down_btn_"]:hover {
     transform: translateY(-4px);
@@ -106,7 +104,6 @@ st.markdown(
 
 .stButton button[data-testid="button-element"][id*="up_btn_"] {
     border: 2px solid #00ff00 !important;
-    box-shadow: none !important;
 }
 .stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
     transform: translateY(-4px);
