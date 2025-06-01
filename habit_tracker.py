@@ -16,12 +16,7 @@ if "daily_responses" not in st.session_state or st.session_state.get("last_check
     st.session_state.daily_responses = {}
     st.session_state.last_checked = today_str
 
-if "updated_df" not in st.session_state:
-    st.session_state.updated_df = df.copy()
-else:
-    for col in df.columns:
-        if col not in st.session_state.updated_df.columns:
-            st.session_state.updated_df[col] = df[col]
+st.session_state.updated_df = df.copy()
 
 # Ensure "Prompt Time" column exists in updated_df (in case session data lost it)
 if "Prompt Time" not in st.session_state.updated_df.columns:
