@@ -58,31 +58,25 @@ if not ready_df.empty:
         <div style='border: 1px solid #444; border-radius: 12px; padding: 40px 30px 20px 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
             <h2 style='font-size: 36px; color: white; margin-bottom: 30px;'>{behavior} — {percent}% Chance</h2>
             <div style='display: flex; justify-content: center; gap: 60px;'>
-                <form action="?yes=true" method="post">
-                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #444; color: white; border: none;" name="response" value="yes">✅</button>
-                </form>
-                <form action="?no=true" method="post">
-                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #444; color: white; border: none;" name="response" value="no">❌</button>
-                </form>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Button triggers
-    if st.query_params.get("yes") == "true":
-        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.experimental_set_query_params()  # Clear query params
-        st.rerun()
-    elif st.query_params.get("no") == "true":
-        st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.experimental_set_query_params()
-        st.rerun()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("✅", key="yes_response", use_container_width=True):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
+    with col2:
+        if st.button("❌", key="no_response", use_container_width=True):
+            st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent - 1))
+            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+            st.session_state.daily_responses[behavior] = True
+            st.session_state.daily_index += 1
+            st.rerun()
 else:
     st.markdown("_✅ All check-ins completed or not yet scheduled._")
 
