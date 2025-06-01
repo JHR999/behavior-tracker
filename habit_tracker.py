@@ -62,7 +62,7 @@ if not ready_df.empty:
     percent = row["Probability"]
     
     st.markdown(f"<h2 style='text-align:center'>{behavior} — {percent}%</h2>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([1, 0.2, 1])
     with col1:
         if st.button(f"✅ Did", key="current_yes"):
             st.session_state.updated_df.at[current_index, "Probability"] = min(99, max(1, percent + 1))
