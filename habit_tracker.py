@@ -66,10 +66,10 @@ if not ready_df.empty:
             <h2 style='font-size: 36px; color: white; margin-bottom: 30px;'>{behavior} — {percent}%</h2>
             <div style='display: flex; justify-content: center; gap: 60px;'>
                 <form action="?yes=true" method="post">
-                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #28a745; color: white; border: none;" name="response" value="yes">✅</button>
+                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #444; color: white; border: none;" name="response" value="yes">✅</button>
                 </form>
                 <form action="?no=true" method="post">
-                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #dc3545; color: white; border: none;" name="response" value="no">❌</button>
+                    <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #444; color: white; border: none;" name="response" value="no">❌</button>
                 </form>
             </div>
         </div>
@@ -97,7 +97,7 @@ if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
-with st.expander("🟣 Situational Logging", expanded=False):
+with st.expander("🟣  **Situational Logging**  ", expanded=False):
     situational_df = edited_df[edited_df["Category"].astype(str).str.strip().str.lower() == "situational"]
     if situational_df.empty:
         st.markdown("_⚠️ No situational behaviors found._")
