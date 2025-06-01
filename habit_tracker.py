@@ -74,20 +74,19 @@ st.markdown(
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Downvote - red border and glow */
-.stButton > div:has(#down_btn_) > button {
-    border-color: red;
+/* Glow and border for individual buttons by key match */
+.stButton button[data-testid="button-element"][id*="down_btn_"] {
+    border: 2px solid red !important;
 }
-.stButton > div:has(#down_btn_):hover > button {
+.stButton button[data-testid="button-element"][id*="down_btn_"]:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px rgba(255, 0, 0, 0.4);
 }
 
-/* Upvote - green border and glow */
-.stButton > div:has(#up_btn_) > button {
-    border-color: #00ff00;
+.stButton button[data-testid="button-element"][id*="up_btn_"] {
+    border: 2px solid #00ff00 !important;
 }
-.stButton > div:has(#up_btn_):hover > button {
+.stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 16px rgba(0, 255, 0, 0.4);
 }
