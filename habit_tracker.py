@@ -7,8 +7,11 @@ def load_csv():
     return pd.read_csv("Behavior Tracking - Sheet1.csv")
 
 df = load_csv()
-emoji_up_map = dict(zip(df["Behavior"], df["+ Emoji"].fillna("✅")))
-emoji_down_map = dict(zip(df["Behavior"], df["- Emoji"].fillna("❌")))
+# Clean up column names (strip whitespace)
+df.columns = df.columns.str.strip()
+# Build emoji maps with safe fallbacks if columns are missing
+emoji_up_map = dict(zip(df["Behavior"], df.get("+ Emoji", pd.Series(["✅"] * len(df)))))
+emoji_down_map = dict(zip(df["Behavior"], df.get("- Emoji", pd.Series(["❌"] * len(df)))))
 df["Probability"] = pd.to_numeric(df["Probability"], errors="coerce").fillna(50).astype(int)
 if "Prompt Time" not in df.columns:
     df["Prompt Time"] = ""
