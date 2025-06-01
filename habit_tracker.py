@@ -10,23 +10,46 @@ def load_csv():
 def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
+    st.markdown(f"""
+    <style>
+    .emoji-btn-container {{
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+    }}
+    .emoji-btn {{
+        font-size: 70px;
+        height: 100px;
+        width: 100px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        background-color: #111;
+        transition: 0.2s ease;
+        box-shadow: none;
+        border: 3px solid #555;
+    }}
+    .emoji-btn:hover {{
+        transform: translateY(-5px);
+    }}
+    .emoji-btn.up:hover {{
+        box-shadow: 0 0 25px rgba(0,255,0,0.6), 0 0 50px rgba(0,255,0,0.4);
+        border-color: limegreen;
+    }}
+    .emoji-btn.down:hover {{
+        box-shadow: 0 0 25px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.4);
+        border-color: red;
+    }}
+    </style>
 
-    st.markdown('<div style="display: flex; justify-content: center; gap: 40px; align-items: center;">', unsafe_allow_html=True)
-    if st.button(f"{down_emoji}", key=f"down_btn_{index}"):
-        st.session_state["last_change_msg"] = f"<span style='color: red;'>{behavior} chance {percent}% → {percent - 1}%</span>"
-        st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.rerun()
-    if st.button(f"{up_emoji}", key=f"up_btn_{index}"):
-        st.session_state["last_change_msg"] = f"<span style='color: limegreen;'>{behavior} chance {percent}% → {percent + 1}%</span>"
-        st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-        st.session_state.daily_responses[behavior] = True
-        st.session_state.daily_index += 1
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    <div class="emoji-btn-container">
+        <a href="?action=down&index={index}" class="emoji-btn down">{down_emoji}</a>
+        <a href="?action=up&index={index}" class="emoji-btn up">{up_emoji}</a>
+    </div>
+    """, unsafe_allow_html=True)
 
 df = load_csv()
 # Clean up column names (strip whitespace)
