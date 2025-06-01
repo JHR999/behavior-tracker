@@ -63,7 +63,7 @@ if not ready_df.empty:
 
     st.markdown(f"""
         <div style='border: 1px solid #444; border-radius: 12px; padding: 40px 30px 20px 30px; margin: 20px auto; text-align: center; max-width: 600px; background-color: #1e1e1e;'>
-            <h2 style='font-size: 36px; color: white; margin-bottom: 30px;'>{behavior} — {percent}%</h2>
+            <h2 style='font-size: 36px; color: white; margin-bottom: 30px;'>{behavior} — {percent}% Chance</h2>
             <div style='display: flex; justify-content: center; gap: 60px;'>
                 <form action="?yes=true" method="post">
                     <button style="font-size: 32px; padding: 20px 40px; border-radius: 12px; background-color: #444; color: white; border: none;" name="response" value="yes">✅</button>
@@ -97,7 +97,8 @@ if daily_df.empty:
     st.markdown("_⚠️ No daily behaviors to display. Check your CSV or Prompt Times._")
 
 st.markdown("---")
-with st.expander("🟣  **Situational Logging**  ", expanded=False):
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+with st.expander("🟣  **Situational Behaviors**  ", expanded=False):
     situational_df = edited_df[edited_df["Category"].astype(str).str.strip().str.lower() == "situational"]
     if situational_df.empty:
         st.markdown("_⚠️ No situational behaviors found._")
@@ -105,7 +106,7 @@ with st.expander("🟣  **Situational Logging**  ", expanded=False):
         row = situational_df.loc[i]
         behavior = row["Behavior"]
         percent = row["Probability"]
-        st.markdown(f"**{behavior}** — {percent}%")
+        st.markdown(f"**{behavior}** — {percent}% Chance")
         col1, col2 = st.columns(2)
         if col1.button(f"⬆️ Level Up '{behavior}'", key=f"situational_yes_{i}"):
             st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
@@ -115,3 +116,4 @@ with st.expander("🟣  **Situational Logging**  ", expanded=False):
             st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
             st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
             st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
