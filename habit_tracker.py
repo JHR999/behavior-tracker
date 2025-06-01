@@ -112,19 +112,22 @@ st.markdown(
     border: 3px solid #444;
     margin: 0 10px;
     box-sizing: border-box;
+    color: white;
 }
 
 .stButton button[data-testid="button-element"][id*="down_btn_"] {
-    border: 3px solid red !important;
+    border-color: red !important;
 }
+
 .stButton button[data-testid="button-element"][id*="down_btn_"]:hover {
     transform: translateY(-6px);
     box-shadow: 0 0 25px rgba(255, 0, 0, 0.9), 0 0 40px rgba(255, 0, 0, 0.6);
 }
 
 .stButton button[data-testid="button-element"][id*="up_btn_"] {
-    border: 3px solid #00ff00 !important;
+    border-color: #00ff00 !important;
 }
+
 .stButton button[data-testid="button-element"][id*="up_btn_"]:hover {
     transform: translateY(-6px);
     box-shadow: 0 0 25px rgba(0, 255, 0, 0.9), 0 0 40px rgba(0, 255, 0, 0.6);
