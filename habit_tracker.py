@@ -54,6 +54,9 @@ emoji_down_map = dict(zip(df["Behavior"], df.get("- Emoji", pd.Series(["❌"] * 
 # Behavior Check-In
 st.title("Behavior Check-In")
 
+if "Completed" not in st.session_state.updated_df.columns:
+    st.session_state.updated_df["Completed"] = False
+
 remaining_behaviors = st.session_state.updated_df[~st.session_state.updated_df["Completed"]]
 
 if not remaining_behaviors.empty:
