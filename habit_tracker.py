@@ -76,14 +76,14 @@ if not remaining_behaviors.empty:
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
             st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
             new_val = min(99, percent + 1)
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
             st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
-            st.experimental_rerun()
+            st.rerun()
 else:
     st.success("✅ All check-ins completed or not yet scheduled.")
 
@@ -102,24 +102,22 @@ with st.expander("📈 Situational Behaviors"):
         st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
         col1, col2 = st.columns([1, 1])
         with col1:
-            st.markdown(f'<button class="emoji-button emoji-minus" onclick="fetch(\'#{i}_down\')">{down_emoji}</button>', unsafe_allow_html=True)
             if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
                 new_val = max(1, percent - 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
-                st.experimental_rerun()
+                st.rerun()
         with col2:
-            st.markdown(f'<button class="emoji-button emoji-plus" onclick="fetch(\'#{i}_up\')">{up_emoji}</button>', unsafe_allow_html=True)
             if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
-                st.experimental_rerun()
+                st.rerun()
 
 # Reset Button
 if st.button("🔄 Reset Today's Check-ins"):
     st.session_state.updated_df["Completed"] = False
-    st.experimental_rerun()
+    st.rerun()
 
 # Save
 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
