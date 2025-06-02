@@ -9,7 +9,7 @@ st.set_page_config(page_title="Behavior Tracker", page_icon="🧠", layout="cent
 st.markdown("""
     <style>
     .emoji-button {
-        font-size: 2.5rem;
+        font-size: 3.5rem;
         width: 70px;
         height: 70px;
         border-radius: 12px;
@@ -24,22 +24,22 @@ st.markdown("""
         background-color: transparent;
     }
     .emoji-button:hover {
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        transform: scale(1.08);
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        transform: scale(1.12);
     }
     .emoji-plus {
         border-color: transparent;
     }
     .emoji-plus:hover {
         border-color: green;
-        box-shadow: 0 0 12px green;
+        box-shadow: 0 0 18px limegreen;
     }
     .emoji-minus {
         border-color: transparent;
     }
     .emoji-minus:hover {
         border-color: red;
-        box-shadow: 0 0 12px red;
+        box-shadow: 0 0 18px red;
     }
     .percentage-change {
         font-weight: bold;
@@ -88,9 +88,7 @@ def clear_percent_change():
     def clear_and_rerun():
         st.session_state.pop("percent_change_message", None)
         st.session_state.pop("percent_change_color", None)
-        ctx = st.script_run_ctx.get_script_run_ctx()
-        st.experimental_rerun()
-    # Use threading.Timer to delay clearing and rerun
+    # Use threading.Timer to delay clearing
     timer = threading.Timer(7.0, clear_and_rerun)
     timer.start()
 
@@ -106,7 +104,8 @@ if not remaining_behaviors.empty:
 
     col1, col2 = st.columns([1, 1], gap="small")
     with col1:
-        if st.button(emoji_down_map.get(behavior, "❌"), key="no_btn", help="Didn't do", use_container_width=True):
+        st.markdown(f'<div class="emoji-button emoji-minus">{emoji_down_map.get(behavior, "❌")}</div>', unsafe_allow_html=True)
+        if st.button("", key="no_btn", help="Didn't do", use_container_width=True):
             new_val = max(1, percent - 1)
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
@@ -115,7 +114,8 @@ if not remaining_behaviors.empty:
             clear_percent_change()
             st.rerun()
     with col2:
-        if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
+        st.markdown(f'<div class="emoji-button emoji-plus">{emoji_up_map.get(behavior, "✅")}</div>', unsafe_allow_html=True)
+        if st.button("", key="yes_btn", help="Did it", use_container_width=True):
             new_val = min(99, percent + 1)
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
@@ -138,13 +138,15 @@ with st.expander("📈 Situational Behaviors"):
         st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
         col1, col2, col3, col4 = st.columns([5, 1, 1, 5], gap="small")
         with col2:
-            if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
+            st.markdown(f'<div class="emoji-button emoji-minus">{down_emoji}</div>', unsafe_allow_html=True)
+            if st.button("", key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
                 new_val = max(1, percent - 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
                 st.rerun()
         with col3:
-            if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
+            st.markdown(f'<div class="emoji-button emoji-plus">{up_emoji}</div>', unsafe_allow_html=True)
+            if st.button("", key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
