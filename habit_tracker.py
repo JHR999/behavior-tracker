@@ -74,7 +74,7 @@ def render_emoji_buttons(behavior, percent, index):
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
                 st.session_state.daily_responses[behavior] = True
                 st.session_state.daily_index += 1
-                st.experimental_rerun()
+                st.rerun()
     with cols[1]:
         if st.button(label=up_emoji, key=f"up_btn_{index}"):
             if behavior not in st.session_state.daily_responses:
@@ -82,7 +82,7 @@ def render_emoji_buttons(behavior, percent, index):
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
                 st.session_state.daily_responses[behavior] = True
                 st.session_state.daily_index += 1
-                st.experimental_rerun()
+                st.rerun()
 
 df = load_csv()
 # Clean up column names (strip whitespace)
