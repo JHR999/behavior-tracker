@@ -224,16 +224,32 @@ with st.container():
             row = situational_df.loc[i]
             behavior = row["Behavior"]
             percent = row["Probability"]
-            st.markdown(f"**{behavior}** — {percent}% Chance")
-            col1, col2 = st.columns(2)
-            if col1.button(f"⬆️ Level Up '{behavior}'", key=f"situational_yes_{i}"):
-                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
-                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                st.rerun()
-            if col2.button(f"⬇️ Level Down '{behavior}'", key=f"situational_no_{i}"):
-                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
-                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                st.rerun()
+            st.markdown(f"""
+                <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
+                    <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <form action="" method="post">
+                            <button style="font-size: 18px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #2e8b57; color: white; cursor: pointer;" name="action" value="situational_up_{i}">⬆️ Level Up</button>
+                        </form>
+                        <form action="" method="post">
+                            <button style="font-size: 18px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #8b2e2e; color: white; cursor: pointer;" name="action" value="situational_down_{i}">⬇️ Level Down</button>
+                        </form>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+            if "action" in st.query_params:
+                action = st.query_params["action"]
+                if action == f"situational_up_{i}":
+                    st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
+                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                    st.query_params.clear()
+                    st.rerun()
+                elif action == f"situational_down_{i}":
+                    st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
+                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                    st.query_params.clear()
+                    st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Toggle for Editable Behavior Table ---
