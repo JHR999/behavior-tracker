@@ -8,7 +8,7 @@ st.set_page_config(page_title="Behavior Tracker", page_icon="🧠", layout="cent
 st.markdown("""
     <style>
     .emoji-button {
-        font-size: 2rem;
+        font-size: 2.5rem;
         width: 70px;
         height: 70px;
         border-radius: 12px;
@@ -100,14 +100,14 @@ with st.expander("📈 Situational Behaviors"):
         down_emoji = emoji_down_map.get(behavior, "❌")
 
         st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
-        col1, col2 = st.columns([1, 1])
-        with col1:
+        col1, col2, col3, col4 = st.columns([5, 1, 1, 5])
+        with col2:
             if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
                 new_val = max(1, percent - 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
                 st.rerun()
-        with col2:
+        with col3:
             if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
