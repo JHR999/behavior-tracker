@@ -3,94 +3,114 @@ import pandas as pd
 import numpy as np
 import datetime
 
-st.set_page_config(page_title="Habit Tracker", page_icon=":clipboard:")
+st.set_page_config(page_title="Behavior Tracker", page_icon="🧠", layout="centered")
 
-st.title("Habit Tracker")
-
-# Load or initialize habit data
-@st.cache_data
-def load_data():
-    try:
-        data = pd.read_csv("habits.csv", parse_dates=["date"])
-        data["date"] = pd.to_datetime(data["date"])
-        return data
-    except FileNotFoundError:
-        return pd.DataFrame(columns=["date", "behavior", "completed"])
-
-data = load_data()
-
-# Sidebar for adding new habits
-st.sidebar.header("Add New Habit")
-new_habit = st.sidebar.text_input("Habit name")
-if st.sidebar.button("Add Habit"):
-    if new_habit:
-        if new_habit not in data["behavior"].unique():
-            today = pd.to_datetime(datetime.date.today())
-            new_entry = pd.DataFrame({"date": [today], "behavior": [new_habit], "completed": [False]})
-            data = pd.concat([data, new_entry], ignore_index=True)
-            data.to_csv("habits.csv", index=False)
-            st.sidebar.success(f"Habit '{new_habit}' added!")
-        else:
-            st.sidebar.warning("Habit already exists.")
-    else:
-        st.sidebar.warning("Please enter a habit name.")
-
-# Select date to view or input data
-selected_date = st.date_input("Select date", datetime.date.today())
-
-# Display habits for the selected date
-st.header(f"Habits for {selected_date.strftime('%B %d, %Y')}")
-
-behaviors = data["behavior"].unique()
-if len(behaviors) == 0:
-    st.info("No habits added yet. Use the sidebar to add a new habit.")
-else:
-    for behavior in behaviors:
-        habit_data = data[(data["behavior"] == behavior) & (data["date"] == pd.to_datetime(selected_date))]
-        completed = False
-        if not habit_data.empty:
-            completed = bool(habit_data.iloc[0]["completed"])
-        new_completed = st.checkbox(behavior, value=completed, key=f"{behavior}_{selected_date}")
-        if new_completed != completed:
-            if habit_data.empty:
-                new_entry = pd.DataFrame({"date": [selected_date], "behavior": [behavior], "completed": [new_completed]})
-                data = pd.concat([data, new_entry], ignore_index=True)
-            else:
-                idx = habit_data.index[0]
-                data.at[idx, "completed"] = new_completed
-            data.to_csv("habits.csv", index=False)
-
-# Calculate and display completion percentage for today
-today = pd.to_datetime(datetime.date.today())
-today_data = data[data["date"] == today]
-if not today_data.empty:
-    completed_count = today_data["completed"].sum()
-    total_habits = len(today_data)
-    percent = int((completed_count / total_habits) * 100)
-else:
-    percent = 0
-
-# Determine label based on completion percentage
-label = ""
-if percent < 10:
-    label = "Extremely Unlikely (0–9%)"
-elif percent < 20:
-    label = "Very Unlikely (10–19%)"
-elif percent < 40:
-    label = "Unlikely (20–39%)"
-elif percent < 60:
-    label = "Neutral (40–59%)"
-elif percent < 80:
-    label = "Likely (60–79%)"
-elif percent < 95:
-    label = "Very Likely (80–94%)"
-else:
-    label = "Almost Certain (95–99%)"
-
-st.markdown(f"""
-    <div class="daily-checkin-card" style="background-color: #333; padding: 20px; border-radius: 10px; text-align: center;">
-        <h2 style='font-size: 50px; color: white; margin-bottom: 10px;'>Habit Completion</h2>
-        <p style='font-size: 20px; color: #ccc; margin: 0;'>{percent}% Chance</p>
-        <p style='font-size: 16px; color: #888; margin-top: 4px;'>{label}</p>
-    </div>
+st.markdown("""
+    <style>
+    .emoji-button {
+        font-size: 2rem;
+        width: 80px;
+        height: 80px;
+        border-radius: 15px;
+        display: inline-block;
+        text-align: center;
+        line-height: 80px;
+        margin: 10px;
+        border: 2px solid transparent;
+        transition: all 0.2s ease-in-out;
+    }
+    .emoji-button:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        background-color: #f0f0f0;
+    }
+    .emoji-plus:hover {
+        border-color: green;
+    }
+    .emoji-minus:hover {
+        border-color: red;
+    }
+    .percentage-change {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-top: 5px;
+        transition: opacity 0.5s ease-in-out;
+    }
+    </style>
 """, unsafe_allow_html=True)
+
+# Load Data
+@st.cache_data
+def load_df():
+    return pd.read_csv("Behavior Tracking - Sheet1.csv")
+
+df = load_df()
+if "updated_df" not in st.session_state:
+    st.session_state.updated_df = df.copy()
+
+# Emoji Mappings
+emoji_up_map = dict(zip(df["Behavior"], df["+ Emoji"].fillna("✅")))
+emoji_down_map = dict(zip(df["Behavior"], df["- Emoji"].fillna("❌")))
+
+# Behavior Check-In
+st.title("Behavior Check-In")
+
+remaining_behaviors = st.session_state.updated_df[~st.session_state.updated_df["Completed"]]
+
+if not remaining_behaviors.empty:
+    behavior_row = remaining_behaviors.iloc[0]
+    behavior = behavior_row["Behavior"]
+    percent = int(behavior_row["Probability"])
+    index = behavior_row.name
+
+    st.markdown(f"<h2 style='text-align:center;'>{behavior}</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center; color:#aaa; margin-top:-10px'>{percent}% chance</p>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button(emoji_down_map.get(behavior, "❌"), key="no_btn", help="Didn't do", use_container_width=True):
+            new_val = max(1, percent - 1)
+            st.session_state.updated_df.at[index, "Probability"] = new_val
+            st.session_state.updated_df.at[index, "Completed"] = True
+            st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
+            st.experimental_rerun()
+    with col2:
+        if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
+            new_val = min(99, percent + 1)
+            st.session_state.updated_df.at[index, "Probability"] = new_val
+            st.session_state.updated_df.at[index, "Completed"] = True
+            st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
+            st.experimental_rerun()
+else:
+    st.success("✅ All check-ins completed or not yet scheduled.")
+
+# Situational Behavior Tracker
+with st.expander("📈 Situational Behaviors"):
+    situational_df = st.session_state.updated_df[st.session_state.updated_df["Type"] == "Situational"].copy()
+    for i, row in situational_df.iterrows():
+        behavior = row["Behavior"]
+        percent = int(row["Probability"])
+        up_emoji = emoji_up_map.get(behavior, "✅")
+        down_emoji = emoji_down_map.get(behavior, "❌")
+
+        st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
+                new_val = max(1, percent - 1)
+                st.session_state.updated_df.at[i, "Probability"] = new_val
+                st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
+                st.experimental_rerun()
+        with col2:
+            if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
+                new_val = min(99, percent + 1)
+                st.session_state.updated_df.at[i, "Probability"] = new_val
+                st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
+                st.experimental_rerun()
+
+# Reset Button
+if st.button("🔄 Reset Today's Check-ins"):
+    st.session_state.updated_df["Completed"] = False
+    st.experimental_rerun()
+
+# Save
+st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
