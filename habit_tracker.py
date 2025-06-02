@@ -54,9 +54,10 @@ def render_emoji_buttons(behavior, percent, index):
 df = load_csv()
 # Clean up column names (strip whitespace)
 df.columns = df.columns.str.strip()
-# Build emoji maps with safe fallbacks if columns are missing
-emoji_up_map = dict(zip(df["Behavior"], df.get("+ Emoji", pd.Series(["✅"] * len(df)))))
-emoji_down_map = dict(zip(df["Behavior"], df.get("- Emoji", pd.Series(["❌"] * len(df)))))
+df["+ Emoji"] = df["+ Emoji"].fillna("✅")
+df["- Emoji"] = df["- Emoji"].fillna("❌")
+emoji_up_map = dict(zip(df["Behavior"], df["+ Emoji"]))
+emoji_down_map = dict(zip(df["Behavior"], df["- Emoji"]))
 df["Probability"] = pd.to_numeric(df["Probability"], errors="coerce").fillna(50).astype(int)
 if "Prompt Time" not in df.columns:
     df["Prompt Time"] = ""
