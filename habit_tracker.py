@@ -228,10 +228,10 @@ with st.container():
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
                     <div style="display: flex; gap: 20px; justify-content: center;">
-                        <a href="?action=situational_down_{i}" style="text-decoration: none;" onclick="window.location.href=this.href;return false;">
+                        <a href="?action=situational_down_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
                             <button style="font-size: 36px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #8b2e2e; color: white; cursor: pointer;">{emoji_down_map.get(behavior, "❌")}</button>
                         </a>
-                        <a href="?action=situational_up_{i}" style="text-decoration: none;" onclick="window.location.href=this.href;return false;">
+                        <a href="?action=situational_up_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
                             <button style="font-size: 36px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #2e8b57; color: white; cursor: pointer;">{emoji_up_map.get(behavior, "✅")}</button>
                         </a>
                     </div>
