@@ -256,32 +256,72 @@ with st.container():
             row = situational_df.loc[i]
             behavior = row["Behavior"]
             percent = row["Probability"]
+            down_emoji = emoji_down_map.get(behavior, "❌")
+            up_emoji = emoji_up_map.get(behavior, "✅")
             st.markdown(f"""
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
-                    <div style="display: flex; gap: 20px; justify-content: center;">
-                        <a href="?action=situational_down_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
-                            <button class="situational-btn situational-down">{emoji_down_map.get(behavior, "❌")}</button>
-                        </a>
-                        <a href="?action=situational_up_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
-                            <button class="situational-btn situational-up">{emoji_up_map.get(behavior, "✅")}</button>
-                        </a>
-                    </div>
                 </div>
             """, unsafe_allow_html=True)
-
-            if "action" in st.query_params:
-                action = st.query_params["action"]
-                if action == f"situational_up_{i}":
-                    st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
-                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                    st.query_params.clear()
-                    st.rerun()
-                elif action == f"situational_down_{i}":
-                    st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
-                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                    st.query_params.clear()
-                    st.rerun()
+            cols = st.columns([1, 1], gap="large")
+            with cols[0]:
+                down_clicked = st.button(
+                    down_emoji,
+                    key=f"situational_down_{i}",
+                    help="Decrease probability",
+                    use_container_width=True
+                )
+            with cols[1]:
+                up_clicked = st.button(
+                    up_emoji,
+                    key=f"situational_up_{i}",
+                    help="Increase probability",
+                    use_container_width=True
+                )
+            # Use the same color styling as before for the buttons
+            st.markdown(
+                """
+                <style>
+                [data-testid="stButton"][key="situational_down_""" + str(i) + """"] button {
+                    background-color: #8b2e2e;
+                    color: white;
+                    font-size: 42px;
+                    padding: 12px 28px;
+                    border-radius: 14px;
+                    border: none;
+                    cursor: pointer;
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                [data-testid="stButton"][key="situational_down_""" + str(i) + """"] button:hover {
+                    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+                    transform: scale(1.05);
+                }
+                [data-testid="stButton"][key="situational_up_""" + str(i) + """"] button {
+                    background-color: #2e8b57;
+                    color: white;
+                    font-size: 42px;
+                    padding: 12px 28px;
+                    border-radius: 14px;
+                    border: none;
+                    cursor: pointer;
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                [data-testid="stButton"][key="situational_up_""" + str(i) + """"] button:hover {
+                    box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+                    transform: scale(1.05);
+                }
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
+            if down_clicked:
+                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent - 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.rerun()
+            if up_clicked:
+                st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, percent + 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Toggle for Editable Behavior Table ---
