@@ -87,6 +87,9 @@ else:
     st.success("✅ All check-ins completed or not yet scheduled.")
 
 # Situational Behavior Tracker
+if "Type" not in st.session_state.updated_df.columns:
+    st.session_state.updated_df["Type"] = ""
+
 with st.expander("📈 Situational Behaviors"):
     situational_df = st.session_state.updated_df[st.session_state.updated_df["Type"] == "Situational"].copy()
     for i, row in situational_df.iterrows():
