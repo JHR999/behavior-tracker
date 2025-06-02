@@ -19,14 +19,23 @@ st.markdown("""
         margin: 6px auto;
         border: 2px solid transparent;
         transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        user-select: none;
+        background-color: transparent;
     }
     .emoji-button:hover {
         box-shadow: 0 0 10px rgba(0,0,0,0.3);
         transform: scale(1.08);
     }
+    .emoji-plus {
+        border-color: transparent;
+    }
     .emoji-plus:hover {
         border-color: green;
         box-shadow: 0 0 12px green;
+    }
+    .emoji-minus {
+        border-color: transparent;
     }
     .emoji-minus:hover {
         border-color: red;
@@ -37,7 +46,8 @@ st.markdown("""
         font-size: 1.1rem;
         margin-top: 5px;
         transition: opacity 0.5s ease-in-out;
-        animation: fadeout 0.5s ease-in-out 6.5s forwards;
+        animation: fadeout 0.5s ease-in-out 7s forwards;
+        text-align: center;
     }
 
     @keyframes fadeout {
@@ -58,6 +68,8 @@ if "updated_df" not in st.session_state:
     st.session_state.updated_df = df.copy()
 if "Completed" not in st.session_state.updated_df.columns:
     st.session_state.updated_df["Completed"] = False
+if "Type" not in st.session_state.updated_df.columns:
+    st.session_state.updated_df["Type"] = ""
 
 # Emoji Mappings
 emoji_up_map = dict(zip(df["Behavior"], df.get("+ Emoji", pd.Series(["✅"] * len(df))).fillna("✅")))
@@ -88,7 +100,7 @@ if not remaining_behaviors.empty:
 
     st.markdown(f"<div style='text-align:center;'><h2>{behavior}</h2><p style='font-size:0.9rem; color:#888;'>{percent}% chance</p></div>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1, 1], gap="small")
     with col1:
         if st.button(emoji_down_map.get(behavior, "❌"), key="no_btn", help="Didn't do", use_container_width=True):
             new_val = max(1, percent - 1)
@@ -98,6 +110,22 @@ if not remaining_behaviors.empty:
             st.session_state.percent_change_color = "red"
             threading.Thread(target=clear_percent_change).start()
             st.rerun()
+        else:
+            st.markdown(f"""
+                <style>
+                div[data-testid="stButton"][key="no_btn"] > button {{
+                    all: unset;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }}
+                div[data-testid="stButton"][key="no_btn"] > button:hover {{
+                    border-color: red !important;
+                    box-shadow: 0 0 12px red !important;
+                }}
+                </style>
+                <button class="emoji-button emoji-minus">{emoji_down_map.get(behavior, "❌")}</button>
+                """, unsafe_allow_html=True)
     with col2:
         if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
             new_val = min(99, percent + 1)
@@ -107,13 +135,26 @@ if not remaining_behaviors.empty:
             st.session_state.percent_change_color = "green"
             threading.Thread(target=clear_percent_change).start()
             st.rerun()
+        else:
+            st.markdown(f"""
+                <style>
+                div[data-testid="stButton"][key="yes_btn"] > button {{
+                    all: unset;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }}
+                div[data-testid="stButton"][key="yes_btn"] > button:hover {{
+                    border-color: green !important;
+                    box-shadow: 0 0 12px green !important;
+                }}
+                </style>
+                <button class="emoji-button emoji-plus">{emoji_up_map.get(behavior, "✅")}</button>
+                """, unsafe_allow_html=True)
 else:
     st.success("✅ All check-ins completed or not yet scheduled.")
 
 # Situational Behavior Tracker
-if "Type" not in st.session_state.updated_df.columns:
-    st.session_state.updated_df["Type"] = ""
-
 with st.expander("📈 Situational Behaviors"):
     situational_df = st.session_state.updated_df[st.session_state.updated_df["Type"] == "Situational"].copy()
     for i, row in situational_df.iterrows():
@@ -123,19 +164,51 @@ with st.expander("📈 Situational Behaviors"):
         down_emoji = emoji_down_map.get(behavior, "❌")
 
         st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
-        col1, col2, col3, col4 = st.columns([5, 1, 1, 5])
+        col1, col2, col3, col4 = st.columns([5, 1, 1, 5], gap="small")
         with col2:
             if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
                 new_val = max(1, percent - 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
                 st.rerun()
+            else:
+                st.markdown(f"""
+                    <style>
+                    div[data-testid="stButton"][key="situational_down_{i}"] > button {{
+                        all: unset;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }}
+                    div[data-testid="stButton"][key="situational_down_{i}"] > button:hover {{
+                        border-color: red !important;
+                        box-shadow: 0 0 12px red !important;
+                    }}
+                    </style>
+                    <button class="emoji-button emoji-minus">{down_emoji}</button>
+                    """, unsafe_allow_html=True)
         with col3:
             if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
                 st.rerun()
+            else:
+                st.markdown(f"""
+                    <style>
+                    div[data-testid="stButton"][key="situational_up_{i}"] > button {{
+                        all: unset;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }}
+                    div[data-testid="stButton"][key="situational_up_{i}"] > button:hover {{
+                        border-color: green !important;
+                        box-shadow: 0 0 12px green !important;
+                    }}
+                    </style>
+                    <button class="emoji-button emoji-plus">{up_emoji}</button>
+                    """, unsafe_allow_html=True)
 
 # Reset Button
 if st.button("🔄 Reset Today's Check-ins"):
