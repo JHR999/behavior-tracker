@@ -287,21 +287,20 @@ with st.container():
             st.markdown(f"""
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
-                    <div style="display: flex; justify-content: center; gap: 30px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: center; gap: 40px; margin-top: 15px;">
+                        <form action="" method="get">
+                            <input type="hidden" name="situational_action" value="down">
+                            <input type="hidden" name="index" value="{i}">
+                            <button type="submit" class="emoji-btn down">{down_emoji}</button>
+                        </form>
+                        <form action="" method="get">
+                            <input type="hidden" name="situational_action" value="up">
+                            <input type="hidden" name="index" value="{i}">
+                            <button type="submit" class="emoji-btn up">{up_emoji}</button>
+                        </form>
+                    </div>
+                </div>
             """, unsafe_allow_html=True)
-            st.markdown(f'''
-            <form action="" method="get" style="display:inline;">
-                <input type="hidden" name="situational_action" value="down">
-                <input type="hidden" name="index" value="{i}">
-                <button type="submit" class="emoji-btn down">{down_emoji}</button>
-            </form>
-            <form action="" method="get" style="display:inline;">
-                <input type="hidden" name="situational_action" value="up">
-                <input type="hidden" name="index" value="{i}">
-                <button type="submit" class="emoji-btn up">{up_emoji}</button>
-            </form>
-            ''', unsafe_allow_html=True)
-            st.markdown("</div></div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Situational button action handling (no page reload) ---
