@@ -244,22 +244,23 @@ with st.container():
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
                 """, unsafe_allow_html=True)
-            # Use st.form for situational buttons
+            # Use st.form for situational buttons (refactored: two st.button with one form_submit_button)
             with st.form(key=f"situational_form_{i}", clear_on_submit=False):
-                cols = st.columns([1,1])
+                cols = st.columns([1, 1])
                 with cols[0]:
-                    if st.form_submit_button(label=down_emoji, key=f"situational_down_btn_{i}"):
-                        current_prob = st.session_state.updated_df.at[i, "Probability"]
-                        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob - 1))
-                        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                        st.experimental_rerun()
+                    down_clicked = st.button(label=down_emoji, key=f"situational_down_btn_{i}")
                 with cols[1]:
-                    if st.form_submit_button(label=up_emoji, key=f"situational_up_btn_{i}"):
-                        current_prob = st.session_state.updated_df.at[i, "Probability"]
+                    up_clicked = st.button(label=up_emoji, key=f"situational_up_btn_{i}")
+                submitted = st.form_submit_button("Submit")
+
+                if submitted:
+                    current_prob = st.session_state.updated_df.at[i, "Probability"]
+                    if down_clicked:
+                        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob - 1))
+                    elif up_clicked:
                         st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob + 1))
-                        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                        st.experimental_rerun()
-                st.form_submit_button("Submit")
+                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                    st.experimental_rerun()
             st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
