@@ -242,3 +242,9 @@ if show_table:
     edited_df = st.data_editor(st.session_state.updated_df, num_rows="dynamic", use_container_width=True)
 else:
     edited_df = st.session_state.updated_df
+
+# --- Reset Daily Check-In State ---
+if st.button("🔄 Reset Today's Responses"):
+    st.session_state.daily_responses = {}
+    st.session_state.daily_index = 0
+    st.rerun()
