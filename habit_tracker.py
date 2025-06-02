@@ -3,6 +3,36 @@ import streamlit as st
 from datetime import datetime, date, time
 from streamlit.components.v1 import html
 
+st.markdown("""
+<style>
+.situational-btn {
+    font-size: 42px;
+    padding: 12px 28px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.situational-btn:hover {
+    transform: scale(1.05);
+}
+.situational-up {
+    background-color: #2e8b57;
+    color: white;
+}
+.situational-up:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+}
+.situational-down {
+    background-color: #8b2e2e;
+    color: white;
+}
+.situational-down:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+}
+</style>
+""", unsafe_allow_html=True)
+
 # --- Dynamic Table for Editing Behaviors ---
 def load_csv():
     return pd.read_csv("Behavior Tracking - Sheet1.csv")
@@ -28,7 +58,7 @@ def render_emoji_buttons(behavior, percent, index):
         justify-content: center;
         text-decoration: none;
         background-color: #111;
-        transition: 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-shadow: none;
         border: 3px solid #555;
     }}
@@ -36,10 +66,12 @@ def render_emoji_buttons(behavior, percent, index):
         transform: translateY(-5px);
     }}
     .emoji-btn.up:hover {{
+        transform: scale(1.1) translateY(-4px);
         box-shadow: 0 0 25px rgba(0,255,0,0.6), 0 0 50px rgba(0,255,0,0.4);
         border-color: limegreen;
     }}
     .emoji-btn.down:hover {{
+        transform: scale(1.1) translateY(-4px);
         box-shadow: 0 0 25px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.4);
         border-color: red;
     }}
@@ -229,10 +261,10 @@ with st.container():
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
                     <div style="display: flex; gap: 20px; justify-content: center;">
                         <a href="?action=situational_down_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
-                            <button style="font-size: 36px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #8b2e2e; color: white; cursor: pointer;">{emoji_down_map.get(behavior, "❌")}</button>
+                            <button class="situational-btn situational-down">{emoji_down_map.get(behavior, "❌")}</button>
                         </a>
                         <a href="?action=situational_up_{i}" style="text-decoration: none;" onclick="event.preventDefault(); window.location.search=this.search;">
-                            <button style="font-size: 36px; padding: 10px 20px; border-radius: 8px; border: none; background-color: #2e8b57; color: white; cursor: pointer;">{emoji_up_map.get(behavior, "✅")}</button>
+                            <button class="situational-btn situational-up">{emoji_up_map.get(behavior, "✅")}</button>
                         </a>
                     </div>
                 </div>
