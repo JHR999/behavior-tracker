@@ -288,8 +288,8 @@ with st.container():
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
                     <div style="display: flex; justify-content: center; gap: 40px; margin-top: 15px;">
-                        <a href="?situational_action=down&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn down">{down_emoji}</a>
-                        <a href="?situational_action=up&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn up">{up_emoji}</a>
+                        <a href="?situational_action=down&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn down" style="text-decoration: none;">{down_emoji}</a>
+                        <a href="?situational_action=up&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn up" style="text-decoration: none;">{up_emoji}</a>
                     </div>
                 </div>
             """, unsafe_allow_html=True)
