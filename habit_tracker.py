@@ -9,25 +9,27 @@ st.markdown("""
     <style>
     .emoji-button {
         font-size: 2rem;
-        width: 80px;
-        height: 80px;
-        border-radius: 15px;
-        display: inline-block;
-        text-align: center;
-        line-height: 80px;
-        margin: 10px;
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 6px auto;
         border: 2px solid transparent;
         transition: all 0.2s ease-in-out;
     }
     .emoji-button:hover {
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        background-color: #f0f0f0;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        transform: scale(1.08);
     }
     .emoji-plus:hover {
         border-color: green;
+        box-shadow: 0 0 12px green;
     }
     .emoji-minus:hover {
         border-color: red;
+        box-shadow: 0 0 12px red;
     }
     .percentage-change {
         font-weight: bold;
@@ -65,8 +67,7 @@ if not remaining_behaviors.empty:
     percent = int(behavior_row["Probability"])
     index = behavior_row.name
 
-    st.markdown(f"<h2 style='text-align:center;'>{behavior}</h2>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align:center; color:#aaa; margin-top:-10px'>{percent}% chance</p>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align:center;'><h2>{behavior}</h2><p style='font-size:0.9rem; color:#888;'>{percent}% chance</p></div>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([1, 1])
     with col1:
@@ -101,12 +102,14 @@ with st.expander("📈 Situational Behaviors"):
         st.markdown(f"<h4 style='margin-bottom:2px;'>{behavior}</h4><p style='color:#888; margin-top:0;'>{percent}% chance</p>", unsafe_allow_html=True)
         col1, col2 = st.columns([1, 1])
         with col1:
+            st.markdown(f'<button class="emoji-button emoji-minus" onclick="fetch(\'#{i}_down\')">{down_emoji}</button>', unsafe_allow_html=True)
             if st.button(down_emoji, key=f"situational_down_{i}", help="Lower chance", use_container_width=True):
                 new_val = max(1, percent - 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
                 st.experimental_rerun()
         with col2:
+            st.markdown(f'<button class="emoji-button emoji-plus" onclick="fetch(\'#{i}_up\')">{up_emoji}</button>', unsafe_allow_html=True)
             if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
