@@ -66,25 +66,23 @@ def load_csv():
 def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
-    # Using st.form to avoid page reload and new tab opening
-    with st.form(key=f"form_{index}", clear_on_submit=False):
-        cols = st.columns([1,1])
-        with cols[0]:
-            if st.form_submit_button(label=down_emoji, key=f"down_btn_{index}"):
-                if behavior not in st.session_state.daily_responses:
-                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                    st.session_state.daily_responses[behavior] = True
-                    st.session_state.daily_index += 1
-                    st.experimental_rerun()
-        with cols[1]:
-            if st.form_submit_button(label=up_emoji, key=f"up_btn_{index}"):
-                if behavior not in st.session_state.daily_responses:
-                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                    st.session_state.daily_responses[behavior] = True
-                    st.session_state.daily_index += 1
-                    st.experimental_rerun()
+    cols = st.columns([1, 1])
+    with cols[0]:
+        if st.button(label=down_emoji, key=f"down_btn_{index}"):
+            if behavior not in st.session_state.daily_responses:
+                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.session_state.daily_responses[behavior] = True
+                st.session_state.daily_index += 1
+                st.experimental_rerun()
+    with cols[1]:
+        if st.button(label=up_emoji, key=f"up_btn_{index}"):
+            if behavior not in st.session_state.daily_responses:
+                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                st.session_state.daily_responses[behavior] = True
+                st.session_state.daily_index += 1
+                st.experimental_rerun()
 
 df = load_csv()
 # Clean up column names (strip whitespace)
