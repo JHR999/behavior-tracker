@@ -66,48 +66,25 @@ def load_csv():
 def render_emoji_buttons(behavior, percent, index):
     up_emoji = emoji_up_map.get(behavior, "✅")
     down_emoji = emoji_down_map.get(behavior, "❌")
-    st.markdown(f"""
-    <style>
-    .emoji-btn-container {{
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin-top: 20px;
-    }}
-    .emoji-btn {{
-        font-size: 70px;
-        height: 100px;
-        width: 100px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        background-color: #111;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: none;
-        border: 3px solid #555;
-    }}
-    .emoji-btn:hover {{
-        transform: translateY(-5px);
-    }}
-    .emoji-btn.up:hover {{
-        transform: scale(1.1) translateY(-4px);
-        box-shadow: 0 0 25px rgba(0,255,0,0.6), 0 0 50px rgba(0,255,0,0.4);
-        border-color: limegreen;
-    }}
-    .emoji-btn.down:hover {{
-        transform: scale(1.1) translateY(-4px);
-        box-shadow: 0 0 25px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.4);
-        border-color: red;
-    }}
-    </style>
-
-    <div class="emoji-btn-container">
-        <a href="?action=down&index={index}" class="emoji-btn down">{down_emoji}</a>
-        <a href="?action=up&index={index}" class="emoji-btn up">{up_emoji}</a>
-    </div>
-    """, unsafe_allow_html=True)
+    # Using st.form to avoid page reload and new tab opening
+    with st.form(key=f"form_{index}", clear_on_submit=False):
+        cols = st.columns([1,1])
+        with cols[0]:
+            if st.form_submit_button(label=down_emoji, key=f"down_btn_{index}"):
+                if behavior not in st.session_state.daily_responses:
+                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
+                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                    st.session_state.daily_responses[behavior] = True
+                    st.session_state.daily_index += 1
+                    st.experimental_rerun()
+        with cols[1]:
+            if st.form_submit_button(label=up_emoji, key=f"up_btn_{index}"):
+                if behavior not in st.session_state.daily_responses:
+                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
+                    st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                    st.session_state.daily_responses[behavior] = True
+                    st.session_state.daily_index += 1
+                    st.experimental_rerun()
 
 df = load_csv()
 # Clean up column names (strip whitespace)
@@ -218,27 +195,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-try:
-    query_params = st.query_params
-    if "action" in query_params and "index" in query_params:
-        index = int(query_params["index"][0])
-        action = query_params["action"][0]
-        if 0 <= index < len(st.session_state.updated_df):
-            behavior = st.session_state.updated_df.at[index, "Behavior"]
-            percent = st.session_state.updated_df.at[index, "Probability"]
-            if behavior not in st.session_state.daily_responses:
-                if action == "up":
-                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-                elif action == "down":
-                    st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-                st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                st.session_state.daily_responses[behavior] = True
-                st.session_state.daily_index += 1
-                st.query_params.clear()
-                st.rerun()
-except Exception as e:
-    st.warning(f"⚠️ Could not parse action or index from query parameters. Error: {e}")
-
 import time
 
 # --- Daily Behavior Card Rendering ---
@@ -287,31 +243,24 @@ with st.container():
             st.markdown(f"""
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
-                    <div style="display: flex; justify-content: center; gap: 40px; margin-top: 15px;">
-                        <a href="?situational_action=down&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn down" style="text-decoration: none;">{down_emoji}</a>
-                        <a href="?situational_action=up&index={i}" onclick="event.preventDefault(); window.location.search=this.search;" class="emoji-btn up" style="text-decoration: none;">{up_emoji}</a>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+            # Use st.form for situational buttons
+            with st.form(key=f"situational_form_{i}", clear_on_submit=False):
+                cols = st.columns([1,1])
+                with cols[0]:
+                    if st.form_submit_button(label=down_emoji, key=f"situational_down_btn_{i}"):
+                        current_prob = st.session_state.updated_df.at[i, "Probability"]
+                        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob - 1))
+                        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                        st.experimental_rerun()
+                with cols[1]:
+                    if st.form_submit_button(label=up_emoji, key=f"situational_up_btn_{i}"):
+                        current_prob = st.session_state.updated_df.at[i, "Probability"]
+                        st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob + 1))
+                        st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
+                        st.experimental_rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
-
-# --- Situational button action handling (no page reload) ---
-try:
-    query_params = st.query_params
-    if "situational_action" in query_params and "index" in query_params:
-        index = int(query_params["index"][0])
-        action = query_params["situational_action"][0]
-        if 0 <= index < len(st.session_state.updated_df):
-            percent = st.session_state.updated_df.at[index, "Probability"]
-            if action == "up":
-                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent + 1))
-            elif action == "down":
-                st.session_state.updated_df.at[index, "Probability"] = min(99, max(1, percent - 1))
-            st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-            st.query_params.clear()
-            st.rerun()
-except Exception as e:
-    st.warning(f"⚠️ Could not parse situational action or index from query parameters. Error: {e}")
 
 # --- Toggle for Editable Behavior Table ---
 show_table = st.toggle("📝 Edit Behavior Table", value=False)
