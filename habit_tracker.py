@@ -48,8 +48,8 @@ if "updated_df" not in st.session_state:
     st.session_state.updated_df = df.copy()
 
 # Emoji Mappings
-emoji_up_map = dict(zip(df["Behavior"], df["+ Emoji"].fillna("✅")))
-emoji_down_map = dict(zip(df["Behavior"], df["- Emoji"].fillna("❌")))
+emoji_up_map = dict(zip(df["Behavior"], df.get("+ Emoji", pd.Series(["✅"] * len(df))).fillna("✅")))
+emoji_down_map = dict(zip(df["Behavior"], df.get("- Emoji", pd.Series(["❌"] * len(df))).fillna("❌")))
 
 # Behavior Check-In
 st.title("Behavior Check-In")
