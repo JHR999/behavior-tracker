@@ -56,6 +56,8 @@ def load_df():
 df = load_df()
 if "updated_df" not in st.session_state:
     st.session_state.updated_df = df.copy()
+if "Completed" not in st.session_state.updated_df.columns:
+    st.session_state.updated_df["Completed"] = False
 
 # Emoji Mappings
 emoji_up_map = dict(zip(df["Behavior"], df.get("+ Emoji", pd.Series(["✅"] * len(df))).fillna("✅")))
