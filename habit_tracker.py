@@ -85,10 +85,14 @@ if "percent_change_message" in st.session_state:
     )
 
 def clear_percent_change():
-    import time
-    time.sleep(7)
-    st.session_state.pop("percent_change_message", None)
-    st.session_state.pop("percent_change_color", None)
+    def clear_and_rerun():
+        st.session_state.pop("percent_change_message", None)
+        st.session_state.pop("percent_change_color", None)
+        ctx = st.script_run_ctx.get_script_run_ctx()
+        st.experimental_rerun()
+    # Use threading.Timer to delay clearing and rerun
+    timer = threading.Timer(7.0, clear_and_rerun)
+    timer.start()
 
 remaining_behaviors = st.session_state.updated_df[~st.session_state.updated_df["Completed"]]
 
@@ -108,24 +112,8 @@ if not remaining_behaviors.empty:
             st.session_state.updated_df.at[index, "Completed"] = True
             st.session_state.percent_change_message = f"{behavior} chance {percent}% → {new_val}%"
             st.session_state.percent_change_color = "red"
-            threading.Thread(target=clear_percent_change).start()
+            clear_percent_change()
             st.rerun()
-        else:
-            st.markdown(f"""
-                <style>
-                div[data-testid="stButton"][key="no_btn"] > button {{
-                    all: unset;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }}
-                div[data-testid="stButton"][key="no_btn"] > button:hover {{
-                    border-color: red !important;
-                    box-shadow: 0 0 12px red !important;
-                }}
-                </style>
-                <button class="emoji-button emoji-minus">{emoji_down_map.get(behavior, "❌")}</button>
-                """, unsafe_allow_html=True)
     with col2:
         if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
             new_val = min(99, percent + 1)
@@ -133,24 +121,8 @@ if not remaining_behaviors.empty:
             st.session_state.updated_df.at[index, "Completed"] = True
             st.session_state.percent_change_message = f"{behavior} chance {percent}% → {new_val}%"
             st.session_state.percent_change_color = "green"
-            threading.Thread(target=clear_percent_change).start()
+            clear_percent_change()
             st.rerun()
-        else:
-            st.markdown(f"""
-                <style>
-                div[data-testid="stButton"][key="yes_btn"] > button {{
-                    all: unset;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }}
-                div[data-testid="stButton"][key="yes_btn"] > button:hover {{
-                    border-color: green !important;
-                    box-shadow: 0 0 12px green !important;
-                }}
-                </style>
-                <button class="emoji-button emoji-plus">{emoji_up_map.get(behavior, "✅")}</button>
-                """, unsafe_allow_html=True)
 else:
     st.success("✅ All check-ins completed or not yet scheduled.")
 
@@ -171,44 +143,12 @@ with st.expander("📈 Situational Behaviors"):
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
                 st.rerun()
-            else:
-                st.markdown(f"""
-                    <style>
-                    div[data-testid="stButton"][key="situational_down_{i}"] > button {{
-                        all: unset;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    }}
-                    div[data-testid="stButton"][key="situational_down_{i}"] > button:hover {{
-                        border-color: red !important;
-                        box-shadow: 0 0 12px red !important;
-                    }}
-                    </style>
-                    <button class="emoji-button emoji-minus">{down_emoji}</button>
-                    """, unsafe_allow_html=True)
         with col3:
             if st.button(up_emoji, key=f"situational_up_{i}", help="Increase chance", use_container_width=True):
                 new_val = min(99, percent + 1)
                 st.session_state.updated_df.at[i, "Probability"] = new_val
                 st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
                 st.rerun()
-            else:
-                st.markdown(f"""
-                    <style>
-                    div[data-testid="stButton"][key="situational_up_{i}"] > button {{
-                        all: unset;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    }}
-                    div[data-testid="stButton"][key="situational_up_{i}"] > button:hover {{
-                        border-color: green !important;
-                        box-shadow: 0 0 12px green !important;
-                    }}
-                    </style>
-                    <button class="emoji-button emoji-plus">{up_emoji}</button>
-                    """, unsafe_allow_html=True)
 
 # Reset Button
 if st.button("🔄 Reset Today's Check-ins"):
