@@ -257,12 +257,12 @@ with st.container():
                 current_prob = st.session_state.updated_df.at[i, "Probability"]
                 st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob - 1))
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                st.experimental_rerun()
+                st.rerun()
             elif up_clicked:
                 current_prob = st.session_state.updated_df.at[i, "Probability"]
                 st.session_state.updated_df.at[i, "Probability"] = min(99, max(1, current_prob + 1))
                 st.session_state.updated_df.to_csv("Behavior Tracking - Sheet1.csv", index=False)
-                st.experimental_rerun()
+                st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
