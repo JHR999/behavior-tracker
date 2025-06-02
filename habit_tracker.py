@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime
+import threading
 
 st.set_page_config(page_title="Behavior Tracker", page_icon="🧠", layout="centered")
 
@@ -36,6 +37,13 @@ st.markdown("""
         font-size: 1.1rem;
         margin-top: 5px;
         transition: opacity 0.5s ease-in-out;
+        animation: fadeout 0.5s ease-in-out 6.5s forwards;
+    }
+
+    @keyframes fadeout {
+        to {
+            opacity: 0;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -56,8 +64,17 @@ emoji_down_map = dict(zip(df["Behavior"], df.get("- Emoji", pd.Series(["❌"] * 
 # Behavior Check-In
 st.title("Behavior Check-In")
 
-if "Completed" not in st.session_state.updated_df.columns:
-    st.session_state.updated_df["Completed"] = False
+if "percent_change_message" in st.session_state:
+    st.markdown(
+        f"<p class='percentage-change' style='color:{st.session_state['percent_change_color']};'>{st.session_state['percent_change_message']}</p>",
+        unsafe_allow_html=True
+    )
+
+def clear_percent_change():
+    import time
+    time.sleep(7)
+    st.session_state.pop("percent_change_message", None)
+    st.session_state.pop("percent_change_color", None)
 
 remaining_behaviors = st.session_state.updated_df[~st.session_state.updated_df["Completed"]]
 
@@ -75,14 +92,18 @@ if not remaining_behaviors.empty:
             new_val = max(1, percent - 1)
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
-            st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🔻")
+            st.session_state.percent_change_message = f"{behavior} chance {percent}% → {new_val}%"
+            st.session_state.percent_change_color = "red"
+            threading.Thread(target=clear_percent_change).start()
             st.rerun()
     with col2:
         if st.button(emoji_up_map.get(behavior, "✅"), key="yes_btn", help="Did it", use_container_width=True):
             new_val = min(99, percent + 1)
             st.session_state.updated_df.at[index, "Probability"] = new_val
             st.session_state.updated_df.at[index, "Completed"] = True
-            st.toast(f"{behavior} chance {percent}% → {new_val}%", icon="🟢")
+            st.session_state.percent_change_message = f"{behavior} chance {percent}% → {new_val}%"
+            st.session_state.percent_change_color = "green"
+            threading.Thread(target=clear_percent_change).start()
             st.rerun()
 else:
     st.success("✅ All check-ins completed or not yet scheduled.")
