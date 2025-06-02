@@ -30,6 +30,32 @@ st.markdown("""
 .situational-down:hover {
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
 }
+.emoji-btn {
+    font-size: 70px;
+    height: 100px;
+    width: 100px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-color: #111;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: none;
+    border: 3px solid #555;
+    cursor: pointer;
+    border: none;
+}
+.emoji-btn.up:hover {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 0 25px rgba(0,255,0,0.6), 0 0 50px rgba(0,255,0,0.4);
+    border-color: limegreen;
+}
+.emoji-btn.down:hover {
+    transform: scale(1.1) translateY(-4px);
+    box-shadow: 0 0 25px rgba(255,0,0,0.6), 0 0 50px rgba(255,0,0,0.4);
+    border-color: red;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -262,11 +288,20 @@ with st.container():
                 <div style="margin-bottom: 20px; padding: 10px; border-radius: 10px; background-color: #1a1a1a;">
                     <div style="font-weight: bold; font-size: 18px; color: white; margin-bottom: 5px;">{behavior} — <span style="color: #ccc;">{percent}% Chance</span></div>
                     <div style="display: flex; justify-content: center; gap: 30px; margin-top: 10px;">
-                        <a href="?situational_action=down&index={i}" class="emoji-btn down" style="font-size:70px;height:100px;width:100px;display:flex;align-items:center;justify-content:center;text-decoration:none;">{down_emoji}</a>
-                        <a href="?situational_action=up&index={i}" class="emoji-btn up" style="font-size:70px;height:100px;width:100px;display:flex;align-items:center;justify-content:center;text-decoration:none;">{up_emoji}</a>
-                    </div>
-                </div>
             """, unsafe_allow_html=True)
+            st.markdown(f'''
+            <form action="" method="get" style="display:inline;">
+                <input type="hidden" name="situational_action" value="down">
+                <input type="hidden" name="index" value="{i}">
+                <button type="submit" class="emoji-btn down">{down_emoji}</button>
+            </form>
+            <form action="" method="get" style="display:inline;">
+                <input type="hidden" name="situational_action" value="up">
+                <input type="hidden" name="index" value="{i}">
+                <button type="submit" class="emoji-btn up">{up_emoji}</button>
+            </form>
+            ''', unsafe_allow_html=True)
+            st.markdown("</div></div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Situational button action handling (no page reload) ---
